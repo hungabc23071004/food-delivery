@@ -1,4 +1,5 @@
 package com.hung.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -6,33 +7,30 @@ import lombok.experimental.FieldDefaults;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-public class OrderItem {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+    
     Integer quantity;
     Double price;
 
     @ManyToOne
-    @JoinColumn(name = "order_shop_group_id")
-    OrderShopGroup orderShopGroup;
+    @JoinColumn(name = "cart_id")
+    Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    Order order;
+    @JoinColumn(name = "food_id")
+    Food food; 
 
     @Builder.Default
-    @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<OrderItermOption> options = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "food_id")
-    Food food;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "cartItem")
+    List<FoodOption> foodOptions = new ArrayList<>();
 }

@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -14,18 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Category {
+public class FoodImage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+    String imageUrl;
+    Boolean isPrimary;
 
-    String name;
-    String description;
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Food> foods= new ArrayList<>();
-
-    
-
-
+    @ManyToOne
+    @JoinColumn(name = "food_id")
+    Food food;
 }

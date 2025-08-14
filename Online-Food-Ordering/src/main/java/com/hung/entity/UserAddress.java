@@ -4,29 +4,28 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
+import java.math.BigDecimal;
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Cart {
+@Entity
+public class UserAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-
-    LocalDateTime addedAt;
+    String fullAddress;
+    String detailAddress;
+    String receiverName;
+    String phoneNumber;
+    String ward;
+    String district;
+    String city;
+    String note;
+    boolean defaultAddress;
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
-
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "cart")
-    List<CartItem> cartItems= new ArrayList<>();
-
 }

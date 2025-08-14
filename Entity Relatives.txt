@@ -1,0 +1,61 @@
+1. QUẢN LÝ NGƯỜI DÙNG
+User ↔ Role: Many-to-Many (một user có nhiều role, một role có thể gán cho nhiều user)
+User ↔ Shop: One-to-One (một user sở hữu một shop, một shop thuộc một user)
+User ↔ Order: One-to-Many (một user có nhiều đơn hàng, một đơn hàng thuộc một user)
+User ↔ UserAddress: One-to-Many (một user có nhiều địa chỉ giao hàng)
+User ↔ ShopReview: One-to-Many (một user viết nhiều review cho các shop)
+User ↔ Coupon: Many-to-Many (một user có nhiều coupon, một coupon gán cho nhiều user)
+
+2. QUẢN LÝ NHÀ HÀNG
+Shop ↔ Food: One-to-Many (một shop có nhiều món ăn, một món ăn thuộc một shop)
+Shop ↔ ShopReview: One-to-Many (một shop có nhiều review từ các user)
+Shop ↔ OrderShopGroup: One-to-Many (một shop có nhiều nhóm đơn hàng)
+Shop ↔ Coupon: One-to-Many (một shop tạo nhiều coupon khuyến mãi)
+Shop ↔ ShopAddress: One-to-One (một shop có một địa chỉ)
+
+3. QUẢN LÝ MENU
+Category ↔ Food: One-to-Many (một category có nhiều món ăn, một món ăn thuộc một category)
+Food ↔ FoodImage: One-to-Many (một món ăn có nhiều ảnh)
+Food ↔ FoodOptionGroup: One-to-Many (một món ăn có nhiều nhóm tùy chọn)
+FoodOptionGroup ↔ FoodOption: One-to-Many (một nhóm tùy chọn có nhiều tùy chọn cụ thể)
+
+4. QUẢN LÝ GIỎ HÀNG
+User ↔ Cart: One-to-Many (một user có nhiều giỏ hàng theo thời gian)
+Cart ↔ CartItem: One-to-Many (một giỏ hàng có nhiều món ăn)
+CartItem ↔ Food: Many-to-One (một món ăn có thể thêm vào nhiều giỏ hàng)
+CartItem ↔ FoodOption: One-to-Many (một món ăn trong giỏ có nhiều tùy chọn)
+
+5. QUẢN LÝ ĐƠN HÀNG
+Order ↔ OrderShopGroup: One-to-Many (một đơn hàng có nhiều nhóm theo shop)
+OrderShopGroup ↔ OrderItem: One-to-Many (một nhóm shop có nhiều món ăn)
+OrderItem ↔ OrderItermOption: One-to-Many (một món ăn trong đơn có nhiều tùy chọn)
+OrderItem ↔ Food: Many-to-One (một món ăn có thể trong nhiều đơn hàng)
+Order ↔ ShippingAddress: One-to-One (một đơn hàng có một địa chỉ giao)
+Order ↔ Coupon: Many-to-Many (một đơn hàng dùng nhiều coupon, một coupon dùng cho nhiều đơn)
+
+6. QUẢN LÝ ĐÁNH GIÁ
+ShopReview ↔ ReviewImage: One-to-Many (một review có nhiều ảnh)
+ShopReview ↔ ReviewTag: Many-to-Many (một review có nhiều tag, một tag dùng cho nhiều review)
+
+7. QUẢN LÝ KHUYẾN MÃI
+Role ↔ Permission: Many-to-Many (một role có nhiều quyền, một quyền thuộc nhiều role)
+OrderShopGroup ↔ Coupon: Many-to-Many (một nhóm shop dùng nhiều coupon, một coupon dùng cho nhiều nhóm)
+
+8. QUẢN LÝ THANH TOÁN
+Order ↔ Payment: Many-to-One (một phương thức thanh toán dùng cho nhiều đơn hàng)
+Order ↔ OrderStatus: Many-to-One (một trạng thái áp dụng cho nhiều đơn hàng)
+
+9. QUAN HỆ PHỤ
+FoodOption ↔ CartItem: Many-to-One (một tùy chọn có thể trong nhiều giỏ hàng)
+FoodOption ↔ FoodOptionGroup: Many-to-One (một tùy chọn thuộc một nhóm tùy chọn)
+ReviewImage ↔ ShopReview: Many-to-One (một ảnh thuộc một review)
+ShopAddress ↔ Shop: Many-to-One (một địa chỉ thuộc một shop)
+UserAddress ↔ User: Many-to-One (một địa chỉ thuộc một user)
+
+10. ENUM RELATIONSHIPS
+Coupon ↔ CouponType: Many-to-One (một loại coupon áp dụng cho nhiều coupon)
+Coupon ↔ DiscountType: Many-to-One (một loại giảm giá áp dụng cho nhiều coupon)
+Order ↔ Payment: Many-to-One (một phương thức thanh toán dùng cho nhiều đơn)
+Order ↔ OrderStatus: Many-to-One (một trạng thái áp dụng cho nhiều đơn)
+
+

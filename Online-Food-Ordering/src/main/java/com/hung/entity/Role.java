@@ -1,11 +1,15 @@
 package com.hung.entity;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -14,9 +18,13 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class InvalidatedToken {
+public class Role {
     @Id
-    String id;
+    String name;
 
-    Date expiryTime;
+    String description;
+
+    @Builder.Default
+    @ManyToMany
+    List<Permission> permissions= new ArrayList<>();;
 }

@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -14,18 +13,19 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Category {
+public class ShopAddress {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-
-    String name;
-    String description;
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Food> foods= new ArrayList<>();
-
-    
-
+    String phoneNumber;
+    String fullAddress;
+    String detailAddress;
+    String ward;
+    String district;
+    String province;
+    String note;
+    @OneToOne
+    @JoinColumn(name = "shop_id")
+    Shop shop;
 
 }

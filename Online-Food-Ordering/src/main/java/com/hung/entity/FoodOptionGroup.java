@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,18 +14,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Cart {
+public class FoodOptionGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-
-    LocalDateTime addedAt;
+    String  id;
+    String name ;
+    // "Size", "Topping"
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    User user;
+    @JoinColumn(name = "food_id")
+     Food food;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "cart")
-    List<CartItem> cartItems= new ArrayList<>();
-
+    @OneToMany(mappedBy = "optionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+     List<FoodOption> options = new ArrayList<>();
 }
+
