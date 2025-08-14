@@ -34,7 +34,7 @@ public class OrderShopGroup {
     Shop shop;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     Order order;
 
     @Builder.Default

@@ -29,7 +29,7 @@ public class ShopReview {
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "id")
     Order order; // Đơn hàng đã mua
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -25,7 +25,7 @@ public class OrderItem {
     OrderShopGroup orderShopGroup;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     Order order;
 
     @Builder.Default

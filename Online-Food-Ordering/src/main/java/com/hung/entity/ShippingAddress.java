@@ -23,6 +23,6 @@ public class ShippingAddress {
     String district;
     String city;
     @OneToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     Order order;
 }
