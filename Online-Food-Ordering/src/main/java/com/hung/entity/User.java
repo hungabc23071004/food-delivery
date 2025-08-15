@@ -47,12 +47,14 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade =CascadeType.ALL,orphanRemoval = true )
     List<Order> orders= new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     Shop shop;
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<UserAddress> userAddresses= new ArrayList<>();
 
-
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VerificationToken> verificationTokens= new ArrayList<>();
 }

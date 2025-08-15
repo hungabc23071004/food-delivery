@@ -22,7 +22,9 @@ public enum ErrorCode {
     CATEGORY_NOT_EXISTED(1014,"Category does not exist" , HttpStatus.NOT_FOUND ),
     CART_ITEM_NOT_EXISTED(1015,"Cart item does not exist", HttpStatus.NOT_FOUND),
     ORSER_NOT_EXISTED(1016,"Series does not exist", HttpStatus.NOT_FOUND),
-    CART_EMPTY(1017,"Cart is empty", HttpStatus.BAD_REQUEST );
+    CART_EMPTY(1017,"Cart is empty", HttpStatus.BAD_REQUEST ),
+    VERIFICATION_TOKEN_IS_EXPRIRED(1018,"Verification token is expired", HttpStatus.BAD_REQUEST),
+    PASSWORD_NOT_MATCH(1020,"Password does not match", HttpStatus.BAD_REQUEST);
     private Integer code;
     private String message;
     private HttpStatus httpStatus;
