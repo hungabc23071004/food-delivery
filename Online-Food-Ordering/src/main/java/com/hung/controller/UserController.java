@@ -1,6 +1,7 @@
 package com.hung.controller;
 
 import com.hung.dto.request.UserCreationRequest;
+import com.hung.dto.request.UserUpdateRequest;
 import com.hung.dto.response.ApiResponse;
 import com.hung.dto.response.UserResponse;
 import com.hung.service.UserService;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -34,6 +37,41 @@ public class UserController {
                 .result("success")
                 .build();
     }
+
+    @GetMapping
+    ApiResponse<List<UserResponse>> getUsers() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .result(userService.getUsers())
+                .build();
+    }
+
+    @GetMapping("/{userId}")
+    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getUser(userId))
+                .build();
+    }
+
+    @GetMapping("/my-info")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getMyInfo())
+                .build();
+    }
+
+    @DeleteMapping("/{userId}")
+    ApiResponse<String> deleteUser(@PathVariable String userId) {
+        userService.deleteUser(userId);
+        return ApiResponse.<String>builder().result("User has been deleted").build();
+    }
+
+    @PutMapping("/my-info")
+    ApiResponse<UserResponse> updateUser( @RequestBody @Valid UserUpdateRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateUser( request))
+                .build();
+    }
+
 
 
 }

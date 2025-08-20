@@ -24,7 +24,11 @@ public enum ErrorCode {
     ORSER_NOT_EXISTED(1016,"Series does not exist", HttpStatus.NOT_FOUND),
     CART_EMPTY(1017,"Cart is empty", HttpStatus.BAD_REQUEST ),
     VERIFICATION_TOKEN_IS_EXPRIRED(1018,"Verification token is expired", HttpStatus.BAD_REQUEST),
-    PASSWORD_NOT_MATCH(1020,"Password does not match", HttpStatus.BAD_REQUEST);
+    PASSWORD_NOT_MATCH(1020,"Password does not match", HttpStatus.BAD_REQUEST),
+    WRONG_PASSWORD(1021,"Wrong password", HttpStatus.BAD_REQUEST),
+    USER_ADDRESS_NOT_EXISTED(1022,"User address does not exist", HttpStatus.NOT_FOUND),
+    DO_NOT_DELETE_USER_ADDRESS(1021, "The default address cannot be deleted", HttpStatus.BAD_REQUEST);
+
     private Integer code;
     private String message;
     private HttpStatus httpStatus;

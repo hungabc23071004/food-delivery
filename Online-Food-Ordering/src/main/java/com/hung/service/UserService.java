@@ -2,6 +2,7 @@ package com.hung.service;
 
 import com.hung.constant.PredefinedRole;
 import com.hung.dto.request.UserCreationRequest;
+import com.hung.dto.request.UserUpdateRequest;
 import com.hung.dto.response.UserResponse;
 import com.hung.entity.Role;
 import com.hung.entity.User;
@@ -90,6 +91,30 @@ public class UserService {
 
     }
 
+    public UserResponse updateUser( UserUpdateRequest request) {
+
+        User user = userRepository.findByUsernameAndActive(SecurityContextHolder.getContext().getAuthentication().getName(),true)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        userMapper.updateUser(user, request);
+        if(request.getPassword()!=null && !request.getPassword().equals(request.getRepeatPassword())){
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+        if(request.getPassword()!=null){
+            if (passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            } else {
+                throw new AppException(ErrorCode.WRONG_PASSWORD);
+            }
+        }
+
+        if(request.getRoles()!=null){
+            var roles = roleRepository.findAllById(request.getRoles());
+            user.setRoles(new ArrayList<>(roles));
+        }
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
 
     public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
@@ -114,4 +139,5 @@ public class UserService {
         return userMapper.toUserResponse(
                 userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
+
 }

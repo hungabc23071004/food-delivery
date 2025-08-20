@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,35 +23,59 @@ public class Shop {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    @Column(nullable = false, length = 100)
     String name;
+
+    @Column(length = 500)
     String description;
-    String address;
-    String status;
+
+    @ElementCollection
+    @CollectionTable(name = "shop_images", joinColumns = @JoinColumn(name = "shop_id"))
+    @Column(name = "image_url")
+    List<String> images = new ArrayList<>();
+
+    @Column(nullable = false)
+    LocalTime openingTime;
+
+    @Column(nullable = false)
+    LocalTime closingTime;
 
     @CreationTimestamp
     @Column(updatable = false)
     LocalDateTime createdAt;
 
+    @UpdateTimestamp
+    LocalDateTime updatedAt;
+
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     User user;
-
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ShopReview> shopReviews= new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Food> foods= new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderShopGroup> orderShopGroups= new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Coupon> coupons= new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     ShopAddress shopAddress;
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShopReview> shopReviews = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Food> foods = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderShopGroup> orderShopGroups = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Coupon> coupons = new ArrayList<>();
+
+    // 🔹 Many-to-Many với Category
+    @ManyToMany
+    @JoinTable(
+            name = "shop_category_map",
+            joinColumns = @JoinColumn(name = "shop_id"),
+            inverseJoinColumns = @JoinColumn(name = "shop_category_id")
+    )
+    List<ShopCategory> categories = new ArrayList<>();
 }

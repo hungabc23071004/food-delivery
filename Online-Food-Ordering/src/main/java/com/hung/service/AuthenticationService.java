@@ -107,7 +107,9 @@ public class AuthenticationService {
 
         var token = generateToken(user);
 
-        return AuthenticationResponse.builder().token(token).authenticated(true).build();
+        return AuthenticationResponse.builder().token(token).authenticated(true)
+                .role(user.getRoles().get(0).getName().toString().toUpperCase())
+                .build();
     }
 
 
