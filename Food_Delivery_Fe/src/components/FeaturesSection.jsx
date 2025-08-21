@@ -2,7 +2,12 @@ import React from "react";
 
 const FeaturesSection = () => {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-12 bg-white rounded-xl shadow-lg text-gray-800 leading-relaxed">
+    <section className="max-w-6xl mx-auto px-6 py-12 bg-white rounded-xl shadow-lg text-gray-800 leading-relaxed relative mt-10">
+      {/* Viền bo và bóng mờ phía trên giống card */}
+      <div
+        className="w-full h-6 rounded-t-xl absolute left-0 -top-2 pointer-events-none"
+        style={{ boxShadow: "0 -8px 24px -8px #0002", background: "white" }}
+      ></div>
       {/* Tiêu đề chính */}
       <h2 className="text-2xl font-bold mb-4 text-gray-900">
         FoodGo - Ứng dụng đặt đồ ăn online vô vàn deal giảm giá
@@ -132,6 +137,11 @@ const FeaturesSection = () => {
           giúp bạn chọn quán uy tín.
         </li>
       </ul>
+      {/* Viền bo và bóng mờ phía dưới giống card */}
+      <div
+        className="w-full h-6 rounded-b-xl absolute left-0 bottom-0 pointer-events-none"
+        style={{ boxShadow: "0 8px 24px -8px #0002", background: "white" }}
+      ></div>
     </section>
   );
 };

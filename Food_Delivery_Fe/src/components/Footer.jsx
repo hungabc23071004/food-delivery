@@ -116,14 +116,14 @@ const Footer = () => {
           </h3>
           <div className="flex space-x-4">
             <a
-              href="#"
+              href="https://www.facebook.com/nguyen.xuan.hung.485300"
               className="bg-white/10 rounded-full p-2 hover:bg-[#ee4d2d] hover:text-white transition-colors duration-200"
               aria-label="Facebook"
             >
               <Facebook size={20} />
             </a>
             <a
-              href="#"
+              href="https://www.facebook.com/nguyen.xuan.hung.485300"
               className="bg-white/10 rounded-full p-2 hover:bg-[#ee4d2d] hover:text-white transition-colors duration-200"
               aria-label="Instagram"
             >
