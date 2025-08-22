@@ -36,7 +36,16 @@ public class SecurityConfig {
                                 .anyRequest().permitAll()
                 )
                 .csrf(csrf -> csrf.disable())
-                .cors(cors-> cors.configurationSource(corsConfigrationSource()));
+                .cors(cors -> cors
+                        .configurationSource(request -> {
+                            CorsConfiguration config = new CorsConfiguration();
+                            config.addAllowedOrigin("http://localhost:5173");
+                            config.addAllowedMethod("*");
+                            config.addAllowedHeader("*");
+                            config.setAllowCredentials(true); // nếu origin là * thì xóa dòng này
+                            return config;
+                        })
+                );
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
@@ -61,19 +70,21 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
-    private CorsConfigurationSource corsConfigrationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-                config.setAllowedMethods(Collections.singletonList("*"));
-                config.setAllowCredentials(true);
-                config.setAllowedHeaders(Collections.singletonList("*"));
-                config.setExposedHeaders(Arrays.asList("Authorization"));
-                config.setMaxAge(3600L);
-                return config;
-            }
-        };
-    }
+
+
+//    private CorsConfigurationSource corsConfigrationSource() {
+//        return new CorsConfigurationSource() {
+//            @Override
+//            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+//                CorsConfiguration config = new CorsConfiguration();
+//                config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+//                config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//                config.setAllowCredentials(true);
+//                config.setAllowedHeaders(Collections.singletonList("*"));
+//                config.setExposedHeaders(Arrays.asList("Authorization"));
+//                config.setMaxAge(3600L);
+//                return config;
+//            }
+//        };
+//    }
 }
