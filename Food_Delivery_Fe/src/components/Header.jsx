@@ -1,9 +1,55 @@
-import React, { useState } from "react";
-import { MapPin, ShoppingCart, User, Search, Moon, Sun } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { logout } from "../api/Authentication";
+import {
+  MapPin,
+  ShoppingCart,
+  User,
+  Search,
+  Calendar,
+  Wallet,
+  UserCircle,
+  Power,
+  ChevronDown,
+} from "lucide-react";
 
 const Header = () => {
   const [mode, setMode] = useState("Giao hàng");
   const cartCount = 2;
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const isLoggedIn = !!localStorage.getItem("accessToken");
+  let username = "";
+  if (isLoggedIn) {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      username = user?.username || "";
+    } catch {}
+  }
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("accessToken");
+    console.log("Logout token:", token);
+    try {
+      await logout(token);
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    window.location.reload();
+  };
+
+  // 👉 Đóng menu khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 shadow border-b-2 border-orange-500 bg-white">
@@ -31,34 +77,26 @@ const Header = () => {
 
         {/* Mode switch */}
         <div className="flex items-center gap-2 ml-8">
-          <button
-            onClick={() => setMode("Giao hàng")}
-            className={`px-4 py-1 rounded-full text-base font-medium border transition-all duration-150 ${
-              mode === "Giao hàng"
-                ? "bg-orange-500 text-white border-orange-500 shadow-sm"
-                : "bg-orange-50 text-orange-500 border-transparent hover:bg-orange-100"
-            }`}
-          >
-            Giao hàng
-          </button>
-          <button
-            onClick={() => setMode("Tự lấy")}
-            className={`px-4 py-1 rounded-full text-base font-medium border transition-all duration-150 ${
-              mode === "Tự lấy"
-                ? "bg-orange-500 text-white border-orange-500 shadow-sm"
-                : "bg-orange-50 text-orange-500 border-transparent hover:bg-orange-100"
-            }`}
-          >
-            Tự lấy
-          </button>
+          {["Giao hàng", "Tự lấy"].map((item) => (
+            <button
+              key={item}
+              onClick={() => setMode(item)}
+              className={`px-4 py-1 rounded-full text-base font-medium border transition-all duration-150 ${
+                mode === item
+                  ? "bg-orange-500 text-white border-orange-500 shadow-sm"
+                  : "bg-orange-50 text-orange-500 border-transparent hover:bg-orange-100"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
         </div>
 
         {/* Action icons */}
         <div className="flex items-center gap-6 ml-8">
-          {/* Clock icon */}
-          <span className="text-orange-500">
-            <span className="inline-block align-middle">🕒</span>
-          </span>
+          {/* Clock */}
+          <span className="text-orange-500">🕒</span>
+
           {/* Cart */}
           <div className="relative cursor-pointer">
             <ShoppingCart size={24} className="text-orange-500" />
@@ -68,10 +106,90 @@ const Header = () => {
               </span>
             )}
           </div>
+
           {/* User */}
-          <button className="hover:bg-orange-50 p-2 rounded-full text-orange-500">
-            <User size={24} />
-          </button>
+          <div className="relative flex items-center gap-1" ref={dropdownRef}>
+            <button
+              className="flex items-center gap-1 hover:bg-orange-50 p-2 rounded-full text-orange-500"
+              onClick={() => setShowUserMenu((prev) => !prev)}
+            >
+              <User size={24} />
+              <ChevronDown
+                size={18}
+                className={`transition-transform duration-200 ${
+                  showUserMenu ? "rotate-180" : "rotate-0"
+                }`}
+              />
+            </button>
+            {isLoggedIn && username && (
+              <span className="ml-1 text-orange-500 font-medium">
+                {username.length > 12
+                  ? username.slice(0, 12) + "..."
+                  : username}
+              </span>
+            )}
+
+            {/* Dropdown menu */}
+            {showUserMenu && (
+              <div className="absolute left-0 top-full mt-2 w-56 bg-white border rounded shadow-lg z-50">
+                {isLoggedIn ? (
+                  <>
+                    <button
+                      className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-orange-50"
+                      onClick={() => (window.location.href = "/order-history")}
+                    >
+                      <Calendar size={20} className="text-green-500" />
+                      <span className="font-medium text-gray-700">
+                        Lịch sử đơn hàng
+                      </span>
+                    </button>
+                    <button
+                      className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-orange-50"
+                      onClick={() => (window.location.href = "/voucher-wallet")}
+                    >
+                      <Wallet size={20} className="text-blue-500" />
+                      <span className="font-medium text-gray-700">
+                        Ví Voucher
+                      </span>
+                    </button>
+                    <button
+                      className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-orange-50"
+                      onClick={() => (window.location.href = "/account-update")}
+                    >
+                      <UserCircle size={20} className="text-orange-400" />
+                      <span className="font-medium text-gray-700">
+                        Cập nhật tài khoản
+                      </span>
+                    </button>
+                    <button
+                      className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-orange-50"
+                      onClick={handleLogout}
+                    >
+                      <Power size={20} className="text-gray-500" />
+                      <span className="font-medium text-gray-700">
+                        Đăng xuất
+                      </span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="block w-full px-4 py-2 text-left hover:bg-orange-50 text-orange-500"
+                      onClick={() => (window.location.href = "/login")}
+                    >
+                      Đăng nhập
+                    </button>
+                    <button
+                      className="block w-full px-4 py-2 text-left hover:bg-orange-50 text-orange-500"
+                      onClick={() => (window.location.href = "/register")}
+                    >
+                      Đăng ký
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Address */}
