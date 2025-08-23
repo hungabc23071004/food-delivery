@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
+import VerifyAccount from "./components/VerifyAccount";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/verification" element={<VerifyAccount />} />
       </Routes>
     </>
   );

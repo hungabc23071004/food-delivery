@@ -76,7 +76,12 @@ const LoginForm = () => {
         </button>
         <div className="mt-4 text-center text-sm text-gray-500">
           Chưa có tài khoản?{" "}
-          <span className="text-orange-500 cursor-pointer">Đăng ký</span>
+          <span
+            className="text-orange-500 cursor-pointer hover:underline"
+            onClick={() => navigate("/register")}
+          >
+            Đăng ký
+          </span>
         </div>
       </form>
     </div>

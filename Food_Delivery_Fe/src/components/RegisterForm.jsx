@@ -1,172 +1,237 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createUser } from "../api/User";
 
 const RegisterForm = () => {
-  const [form, setForm] = useState({
+  const [formData, setFormData] = useState({
     username: "",
     password: "",
     confirmPassword: "",
     fullName: "",
     email: "",
     phone: "",
-    // dob: "" // Uncomment if you want to use date of birth
+    dob: "",
   });
+
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Basic validation
-    if (
-      !form.username ||
-      !form.password ||
-      !form.confirmPassword ||
-      !form.fullName ||
-      !form.email ||
-      !form.phone
-    ) {
-      setError("Vui lòng nhập đầy đủ thông tin.");
-      return;
-    }
-    if (form.password.length < 6) {
-      setError("Mật khẩu phải từ 6 ký tự trở lên.");
-      return;
-    }
-    if (form.username.length < 4) {
-      setError("Tên tài khoản phải từ 4 ký tự trở lên.");
-      return;
-    }
-    if (form.password !== form.confirmPassword) {
-      setError("Mật khẩu xác nhận không khớp.");
-      return;
-    }
     setError("");
-    // TODO: Gọi API đăng ký ở đây
-    alert("Đăng ký thành công!");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Mật khẩu không khớp!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await createUser(formData); // gọi API backend
+      setShowSuccessModal(true);
+    } catch (err) {
+      setError(err?.response?.data?.message || "Đăng ký thất bại!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-orange-50">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold text-orange-500 mb-6 text-center">
-          Đăng ký tài khoản
+    <div className="min-h-screen w-full flex items-center justify-center bg-[#fff7f0]">
+      <div className="bg-white max-w-2xl w-full mx-auto md:p-8 p-5 rounded-2xl shadow-lg border border-orange-100 mt-12 animate-fade-in">
+        <h2 className="text-3xl font-bold mb-2 text-center text-orange-500 tracking-tight">
+          Tạo tài khoản mới
         </h2>
-        {error && (
-          <div className="mb-4 text-red-500 text-sm text-center">{error}</div>
-        )}
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-700">
-            Tên tài khoản
-          </label>
-          <input
-            type="text"
-            name="username"
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            value={form.username}
-            onChange={handleChange}
-            placeholder="Nhập tên tài khoản"
-            autoComplete="username"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-700">
-            Mật khẩu
-          </label>
-          <input
-            type="password"
-            name="password"
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="Nhập mật khẩu"
-            autoComplete="new-password"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-700">
-            Xác nhận mật khẩu
-          </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            placeholder="Nhập lại mật khẩu"
-            autoComplete="new-password"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-700">
-            Họ và tên
-          </label>
-          <input
-            type="text"
-            name="fullName"
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            value={form.fullName}
-            onChange={handleChange}
-            placeholder="Nhập họ và tên"
-            autoComplete="name"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            name="email"
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Nhập email"
-            autoComplete="email"
-          />
-        </div>
-        <div className="mb-6">
-          <label className="block mb-1 font-medium text-gray-700">
-            Số điện thoại
-          </label>
-          <input
-            type="tel"
-            name="phone"
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            value={form.phone}
-            onChange={handleChange}
-            placeholder="Nhập số điện thoại"
-            autoComplete="tel"
-          />
-        </div>
-        {/* Uncomment nếu muốn dùng ngày sinh */}
-        {/*
-        <div className="mb-6">
-          <label className="block mb-1 font-medium text-gray-700">Ngày sinh</label>
-          <input
-            type="date"
-            name="dob"
-            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-            value={form.dob}
-            onChange={handleChange}
-            placeholder="Chọn ngày sinh"
-            autoComplete="bday"
-          />
-        </div>
-        */}
-        <button
-          type="submit"
-          className="w-full bg-orange-500 text-white font-semibold py-2 rounded hover:bg-orange-600 transition"
-        >
-          Đăng ký
-        </button>
-        <div className="mt-4 text-center text-sm text-gray-500">
+        <p className="text-center text-gray-500 mb-7">
+          Đăng ký để trải nghiệm mua sắm tuyệt vời cùng chúng tôi
+        </p>
+
+        {/* Form */}
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Cột trái */}
+            <div className="flex flex-col gap-4">
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-full bg-gray-50 border border-orange-300 rounded-lg py-3 px-5 text-base text-gray-700 focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                placeholder="Tên đăng nhập"
+                required
+                disabled={loading}
+              />
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full bg-gray-50 border border-orange-300 rounded-lg py-3 px-5 text-base text-gray-700 focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                placeholder="Mật khẩu"
+                required
+                disabled={loading}
+              />
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full bg-gray-50 border border-orange-300 rounded-lg py-3 px-5 text-base text-gray-700 focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                placeholder="Xác nhận mật khẩu"
+                required
+                disabled={loading}
+              />
+            </div>
+
+            {/* Cột phải */}
+            <div className="flex flex-col gap-4">
+              <input
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                className="w-full bg-gray-50 border border-orange-300 rounded-lg py-3 px-5 text-base text-gray-700 focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                placeholder="Họ và tên"
+                required
+                disabled={loading}
+              />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full bg-gray-50 border border-orange-300 rounded-lg py-3 px-5 text-base text-gray-700 focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                placeholder="Email"
+                required
+                disabled={loading}
+              />
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full bg-gray-50 border border-orange-300 rounded-lg py-3 px-5 text-base text-gray-700 focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                placeholder="Số điện thoại"
+                required
+                disabled={loading}
+              />
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleChange}
+                className="w-full bg-gray-50 border border-orange-300 rounded-lg py-3 px-5 text-base text-gray-700 focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                placeholder="Ngày sinh"
+                required
+                disabled={loading}
+              />
+            </div>
+          </div>
+
+          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+
+          {/* Điều khoản */}
+          <div className="flex items-center gap-2">
+            <input
+              id="terms"
+              type="checkbox"
+              className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-2 focus:ring-orange-400"
+              required
+              disabled={loading}
+            />
+            <label htmlFor="terms" className="font-light text-gray-500 text-sm">
+              Tôi đồng ý với{" "}
+              <a
+                className="font-medium text-orange-500 hover:underline"
+                href="#"
+              >
+                Điều khoản và Dịch vụ
+              </a>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-2 text-white bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:opacity-60"
+            disabled={loading}
+          >
+            {loading && (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+            )}
+            {loading ? "Đang tạo..." : "Tạo tài khoản"}
+          </button>
+        </form>
+
+        <p className="text-sm font-light text-gray-500 text-center mt-6">
           Đã có tài khoản?{" "}
-          <span className="text-orange-500 cursor-pointer">Đăng nhập</span>
+          <a
+            href="/login"
+            className="font-medium text-orange-500 hover:underline"
+          >
+            Đăng nhập ngay
+          </a>
+        </p>
+      </div>
+
+      {/* Modal thành công */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full text-center animate-fade-in">
+            <h3 className="text-2xl font-bold text-orange-500 mb-4">
+              Đăng ký thành công!
+            </h3>
+            <p className="mb-6 text-gray-700">
+              Vui lòng kiểm tra email để kích hoạt tài khoản trước khi đăng
+              nhập.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                className="w-full text-white bg-orange-500 hover:bg-orange-600 rounded-lg text-sm px-5 py-2.5"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate("/login");
+                }}
+              >
+                Đăng nhập ngay
+              </button>
+              <button
+                className="w-full text-orange-500 border border-orange-500 hover:bg-orange-50 rounded-lg text-sm px-5 py-2.5"
+                onClick={() =>
+                  window.open("https://mail.google.com/", "_blank")
+                }
+              >
+                Truy cập Gmail
+              </button>
+            </div>
+          </div>
         </div>
-      </form>
+      )}
     </div>
   );
 };

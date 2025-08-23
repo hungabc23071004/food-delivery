@@ -18,7 +18,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String to, String token, String username) throws Exception {
         String subject = "Xác minh tài khoản";
-        String verificationUrl = "http://localhost:8080/food/users/verification?token=" + token + "&username=" + username;
+        String verificationUrl = "http://localhost:5173/verification?token=" + token + "&username=" + username;
         String content = "<b>Chúc mừng bạn đã đăng kí tài khoản thành công trên FOOD DELIVERY!</b><br><br>"
                 + "Nhấn vào <a href=\"" + verificationUrl + "\">đây</a> để xác minh tài khoản.";
 
