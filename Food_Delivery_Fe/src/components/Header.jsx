@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { logout } from "../api/Authentication";
 import {
   MapPin,
@@ -17,6 +18,7 @@ const Header = () => {
   const cartCount = 2;
   const [showUserMenu, setShowUserMenu] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const isLoggedIn = !!localStorage.getItem("accessToken");
   let username = "";
@@ -154,7 +156,7 @@ const Header = () => {
                     </button>
                     <button
                       className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-orange-50"
-                      onClick={() => (window.location.href = "/account-update")}
+                      onClick={() => navigate("/account/profile")}
                     >
                       <UserCircle size={20} className="text-orange-400" />
                       <span className="font-medium text-gray-700">

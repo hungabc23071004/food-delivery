@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Home, Heart, Clock, Grid, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const images = [
   "https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
@@ -10,6 +11,7 @@ const images = [
 ];
 
 const Banner = () => {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Tự động chuyển ảnh mỗi 2 giây
@@ -63,6 +65,7 @@ const Banner = () => {
             <button
               key={index}
               className="flex items-center gap-3 px-6 py-3 bg-white text-gray-800 rounded-2xl shadow-md hover:bg-red-500 hover:text-white transition group"
+              onClick={() => btn.label === "Danh mục" && navigate("/category")}
             >
               <div className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 text-white group-hover:bg-white group-hover:text-red-500 transition">
                 {btn.icon}

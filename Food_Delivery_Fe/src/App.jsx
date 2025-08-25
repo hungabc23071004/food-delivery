@@ -5,6 +5,8 @@ import AboutPage from "./pages/AboutPage";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
 import VerifyAccount from "./components/VerifyAccount";
+import UserAccountPage from "./pages/UserAccountPage";
+import CategoryPage from "./pages/CategoryPage";
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/verification" element={<VerifyAccount />} />
+        <Route path="/account/profile" element={<UserAccountPage />} />
+        <Route path="/category" element={<CategoryPage />} />
       </Routes>
     </>
   );
