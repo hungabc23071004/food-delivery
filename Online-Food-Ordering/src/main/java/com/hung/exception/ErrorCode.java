@@ -27,7 +27,8 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(1020,"Password does not match", HttpStatus.BAD_REQUEST),
     WRONG_PASSWORD(1021,"Wrong password", HttpStatus.BAD_REQUEST),
     USER_ADDRESS_NOT_EXISTED(1022,"User address does not exist", HttpStatus.NOT_FOUND),
-    DO_NOT_DELETE_USER_ADDRESS(1021, "The default address cannot be deleted", HttpStatus.BAD_REQUEST);
+    DO_NOT_DELETE_USER_ADDRESS(1021, "The default address cannot be deleted", HttpStatus.BAD_REQUEST),
+    SHOP_CATEGORY_NOT_EXISTED(1022,"Shop category does not exist", HttpStatus.NOT_FOUND);
 
     private Integer code;
     private String message;

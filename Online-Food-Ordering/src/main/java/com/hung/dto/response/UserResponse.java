@@ -18,4 +18,6 @@ public class UserResponse {
     String phone;
     LocalDate dob;
     Set<RoleResponse> roles;
+    String avatarUrl;
+
 }

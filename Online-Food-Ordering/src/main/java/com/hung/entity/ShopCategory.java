@@ -29,8 +29,7 @@ public class ShopCategory {
         // 🔹 Logo (dùng cho danh mục cha)
         String logoUrl;
 
-        // 🔹 Ảnh hiển thị (dùng cho danh mục con)
-        String imageUrl;
+
 
         // 🔹 Self-reference: Danh mục cha
         @ManyToOne

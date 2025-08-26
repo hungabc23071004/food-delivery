@@ -31,6 +31,7 @@ public class User {
     String email;
     String phone;
     boolean active;
+    String avatarUrl;
     @Builder.Default
     @ManyToMany
     List<Role> roles= new ArrayList<>();

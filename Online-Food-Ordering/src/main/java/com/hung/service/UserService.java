@@ -1,6 +1,7 @@
 package com.hung.service;
 
 import com.hung.constant.PredefinedRole;
+import com.hung.dto.request.UserAvatarRequest;
 import com.hung.dto.request.UserCreationRequest;
 import com.hung.dto.request.UserUpdateRequest;
 import com.hung.dto.response.UserResponse;
@@ -22,7 +23,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +50,9 @@ public class UserService {
     @NonFinal
     @Value("${spring.mail.expiryTime}")
     int expiryTime;
+
+    private static final Path CURRENT_FOLDER = Paths.get(System.getProperty("user.dir"));
+
     public UserResponse createUser(UserCreationRequest request) throws Exception {
         if(!request.getPassword().equals(request.getConfirmPassword())){
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
@@ -138,6 +148,28 @@ public class UserService {
     public UserResponse getUser(String id) {
         return userMapper.toUserResponse(
                 userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+    }
+
+    public  String changeAvatar ( UserAvatarRequest request) throws IOException {
+        Path staticPath = Paths.get("static");
+        Path imagePath = Paths.get("images");
+        if(!Files.exists(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath))){
+            Files.createDirectories(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath));
+        }
+        User user = userRepository.findByUsernameAndActive(SecurityContextHolder.getContext().getAuthentication().getName(),true).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if(user.getAvatarUrl()!=null){
+            Path oldAvatarUrl = CURRENT_FOLDER.resolve(staticPath).resolve(imagePath).resolve(user.getAvatarUrl());
+            Files.deleteIfExists(oldAvatarUrl);
+        }
+
+        Path file = CURRENT_FOLDER.resolve(staticPath).resolve(imagePath).resolve(request.getAvatarUrl().getOriginalFilename());
+        try(OutputStream os =Files.newOutputStream(file)){
+            os.write(request.getAvatarUrl().getBytes());
+        }
+        user.setAvatarUrl(request.getAvatarUrl().getOriginalFilename().toString());
+        userRepository.save(user);
+        return file.toString();
     }
 
 }
