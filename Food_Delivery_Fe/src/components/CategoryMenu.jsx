@@ -1,22 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-const categories = [
-  { icon: "🔥", text: "Phổ biến" },
-  { icon: "🥟", text: "Bánh truyền thống" },
-  { icon: "🍲", text: "Lẩu & Nướng" },
-  { icon: "🍚", text: "Cơm" },
-  { icon: "🍢", text: "Đồ ăn vặt" },
-  { icon: "🍰", text: "Tráng miệng" },
-  { icon: "🧁", text: "Bánh Âu Á" },
-  { icon: "🥦", text: "Đồ chay" },
-  { icon: "🍜", text: "Bún/Phở/Mỳ" },
-  { icon: "🥣", text: "Cháo/Súp" },
-];
+import { getAllCategoryRoot } from "../api/Category";
 
 const CategoryMenu = ({ activeIndex, setActiveIndex }) => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getAllCategoryRoot();
+        setCategories(res.result || []);
+      } catch (err) {
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <div
       className="w-44 bg-white border border-orange-300 rounded-2xl shadow-lg h-full overflow-y-auto pt-0 ml-6 "
@@ -34,7 +36,6 @@ const CategoryMenu = ({ activeIndex, setActiveIndex }) => {
         >
           <ArrowLeft className="w-6 h-6" />
         </span>
-        {/* giữ chỗ cho text để thẳng hàng */}
         <span className="ml-2" style={{ visibility: "hidden" }}>
           .
         </span>
@@ -50,13 +51,22 @@ const CategoryMenu = ({ activeIndex, setActiveIndex }) => {
               : "text-gray-700 hover:bg-gray-100"
           }`}
         >
-          <span
-            className="text-xl flex items-center justify-center"
-            style={{ width: "1.5em" }}
-          >
-            {cat.icon}
-          </span>
-          <span className="ml-2">{cat.text}</span>
+          {/* Nếu có logoUrl thì render hình ảnh, nối với domain backend */}
+          {cat.logoUrl ? (
+            <img
+              src={`http://localhost:8080/food/${cat.logoUrl}`}
+              alt={cat.name}
+              className="w-7 h-7 object-contain"
+            />
+          ) : (
+            <span
+              className="text-xl flex items-center justify-center"
+              style={{ width: "1.5em" }}
+            >
+              {/* icon fallback nếu cần */}
+            </span>
+          )}
+          <span className="ml-2">{cat.name}</span>
         </div>
       ))}
     </div>

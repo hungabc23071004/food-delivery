@@ -1,56 +1,49 @@
-// Kích hoạt người dùng đúng API backend
-export async function activeUser(username, token) {
-  const response = await fetch(
-    `${USER_API}/verification?username=${encodeURIComponent(
-      username
-    )}&token=${encodeURIComponent(token)}`
-  );
-  return response.json();
-}
 import { USER_API } from "../constants/api";
+import axios from "axios";
+
+export async function activeUser(username, token) {
+  const res = await axios.get(`${USER_API}/verification`, {
+    params: { username, token },
+  });
+  return res.data;
+}
 
 export async function getUsers() {
-  const response = await fetch(`${USER_API}`);
-  return response.json();
+  const res = await axios.get(`${USER_API}`);
+  return res.data;
 }
 
 export async function getUser(userId) {
-  const response = await fetch(`${USER_API}/${userId}`);
-  return response.json();
+  const res = await axios.get(`${USER_API}/${userId}`);
+  return res.data;
 }
 
 export async function updateUser(data) {
   const token = localStorage.getItem("accessToken");
-  const response = await fetch(`${USER_API}/my-info`, {
-    method: "PUT",
+  const res = await axios.put(`${USER_API}/my-info`, data, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
   });
-  return response.json();
+  return res.data;
 }
 
 export async function createUser(data) {
-  const response = await fetch(`${USER_API}`, {
-    method: "POST",
+  const res = await axios.post(`${USER_API}`, data, {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
   });
-  return response.json();
+  return res.data;
 }
 
 export async function deleteUser(userId) {
-  const response = await fetch(`${USER_API}/${userId}`, {
-    method: "DELETE",
-  });
-  return response.json();
+  const res = await axios.delete(`${USER_API}/${userId}`);
+  return res.data;
 }
 
 export async function getMyInfo() {
-  const response = await fetch(`${USER_API}/my-info`);
-  return response.json();
+  const res = await axios.get(`${USER_API}/my-info`);
+  return res.data;
 }

@@ -31,12 +31,13 @@ public class ShopCategoryService {
 
 
     public ShopCategoryResponse createShopCategory(ShopCategoryRequest shopCategoryRequest) throws IOException {
-        Path staticPath = Paths.get("static");
+        Path staticPath = Paths.get("Online-Food-Ordering","src", "main", "resources", "static");
         Path imagePath = Paths.get("images");
-        if(!Files.exists(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath))){
-            Files.createDirectories(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath));
+        Path imagesDir = CURRENT_FOLDER.resolve(staticPath).resolve(imagePath);
+        if(!Files.exists(imagesDir)){
+            Files.createDirectories(imagesDir);
         }
-        Path file = CURRENT_FOLDER.resolve(staticPath).resolve(imagePath).resolve(shopCategoryRequest.getLogoUrl().getOriginalFilename());
+        Path file = imagesDir.resolve(shopCategoryRequest.getLogoUrl().getOriginalFilename());
         try(OutputStream os =Files.newOutputStream(file)){
             os.write(shopCategoryRequest.getLogoUrl().getBytes());
         }
