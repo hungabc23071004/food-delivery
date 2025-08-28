@@ -29,5 +29,12 @@ public class UserAddressRequest {
     @NotNull
     private BigDecimal longitude;
 
+    private String ward;
+    private String wardCode;
+    private String district;
+    private String districtId;
+    private String province;
+    private String provinceId;
+
     private String addressType; // HOME / OFFICE / OTHER
 }

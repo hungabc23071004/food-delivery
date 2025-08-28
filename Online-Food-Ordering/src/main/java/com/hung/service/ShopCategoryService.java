@@ -31,7 +31,7 @@ public class ShopCategoryService {
 
 
     public ShopCategoryResponse createShopCategory(ShopCategoryRequest shopCategoryRequest) throws IOException {
-        Path staticPath = Paths.get("Online-Food-Ordering","src", "main", "resources", "static");
+        Path staticPath = Paths.get("uploads");
         Path imagePath = Paths.get("images");
         Path imagesDir = CURRENT_FOLDER.resolve(staticPath).resolve(imagePath);
         if(!Files.exists(imagesDir)){

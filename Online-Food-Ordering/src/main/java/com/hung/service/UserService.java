@@ -151,7 +151,7 @@ public class UserService {
     }
 
     public  String changeAvatar ( UserAvatarRequest request) throws IOException {
-        Path staticPath = Paths.get("static");
+        Path staticPath = Paths.get("uploads");
         Path imagePath = Paths.get("images");
         if(!Files.exists(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath))){
             Files.createDirectories(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath));

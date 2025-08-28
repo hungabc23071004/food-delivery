@@ -1,5 +1,20 @@
+// Đổi avatar người dùng (multipart/form-data)
+export async function changeAvatar(formData) {
+  const res = await axios.post(`${USER_API}/my-avatar`, formData, {
+    headers: {
+      ...getAuthHeader(),
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return res.data;
+}
 import { USER_API } from "../constants/api";
 import axios from "axios";
+
+const getAuthHeader = () => {
+  const token = localStorage.getItem("accessToken");
+  return { Authorization: `Bearer ${token}` };
+};
 
 export async function activeUser(username, token) {
   const res = await axios.get(`${USER_API}/verification`, {
@@ -44,6 +59,10 @@ export async function deleteUser(userId) {
 }
 
 export async function getMyInfo() {
-  const res = await axios.get(`${USER_API}/my-info`);
+  const res = await axios.get(`${USER_API}/my-info`, {
+    headers: {
+      ...getAuthHeader(),
+    },
+  });
   return res.data;
 }

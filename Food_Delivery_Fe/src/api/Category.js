@@ -8,17 +8,13 @@ const getAuthHeader = () => {
 
 // Lấy tất cả category root
 export const getAllCategoryRoot = async () => {
-  const res = await axios.get(CATEGORY_API, {
-    headers: getAuthHeader(),
-  });
+  const res = await axios.get(CATEGORY_API);
   return res.data;
 };
 
 // Lấy category theo parentId
 export const getCategoryByParentId = async (parentId) => {
-  const res = await axios.get(`${CATEGORY_API}/${parentId}`, {
-    headers: getAuthHeader(),
-  });
+  const res = await axios.get(`${CATEGORY_API}/${parentId}`);
   return res.data;
 };
 

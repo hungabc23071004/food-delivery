@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllCategoryRoot } from "../api/Category";
 
-const CategoryMenu = ({ activeIndex, setActiveIndex }) => {
+const CategoryMenu = ({ activeIndex, setActiveIndex, onCategoryClick }) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
@@ -11,7 +11,12 @@ const CategoryMenu = ({ activeIndex, setActiveIndex }) => {
     const fetchCategories = async () => {
       try {
         const res = await getAllCategoryRoot();
-        setCategories(res.result || []);
+        const cats = res.result || [];
+        setCategories(cats);
+        // Gọi hàm onCategoryClick cho category đầu tiên nếu có
+        if (cats.length > 0 && onCategoryClick) {
+          onCategoryClick(cats[0].id, 0);
+        }
       } catch (err) {
         setCategories([]);
       }
@@ -42,8 +47,13 @@ const CategoryMenu = ({ activeIndex, setActiveIndex }) => {
       </div>
       {categories.map((cat, index) => (
         <div
-          key={index}
-          onClick={() => setActiveIndex(index)}
+          key={cat.id}
+          onClick={() => {
+            setActiveIndex(index);
+            if (onCategoryClick) {
+              onCategoryClick(cat.id, index);
+            }
+          }}
           className={`flex items-center gap-3 px-3 py-3 rounded cursor-pointer mb-2 transition-all
           ${
             activeIndex === index
@@ -54,7 +64,7 @@ const CategoryMenu = ({ activeIndex, setActiveIndex }) => {
           {/* Nếu có logoUrl thì render hình ảnh, nối với domain backend */}
           {cat.logoUrl ? (
             <img
-              src={`http://localhost:8080/food/${cat.logoUrl}`}
+              src={`http://localhost:8080/food/uploads/images/${cat.logoUrl}`}
               alt={cat.name}
               className="w-7 h-7 object-contain"
             />

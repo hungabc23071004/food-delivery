@@ -12,14 +12,20 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserAddressResponse {
-    private String id;
-    private String fullAddress;
-    private String detailAddress;
-    private String receiverName;
-    private String phoneNumber;
-    private String note;
-    private boolean defaultAddress;
-    private BigDecimal latitude;
-    private BigDecimal longitude;
-    private String addressType;
+     String id;
+     String fullAddress;
+     String detailAddress;
+     String receiverName;
+     String phoneNumber;
+     String note;
+     boolean defaultAddress;
+     BigDecimal latitude;
+     BigDecimal longitude;
+     String addressType;
+    String ward;
+    String wardCode;
+    String district;
+    String districtId;
+    String province;
+    String provinceId;
 }

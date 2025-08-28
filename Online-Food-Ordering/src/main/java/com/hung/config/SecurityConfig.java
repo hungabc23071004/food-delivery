@@ -32,7 +32,8 @@ public class SecurityConfig {
         httpSecurity.sessionManagement(management-> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(Authorize -> Authorize
 //                        .requestMatchers("/admin/**").hasAnyRole("RESTAURANT_OWNER","ADMIN")
-                                .requestMatchers("/api/**").authenticated()
+                               .requestMatchers("/food/**").permitAll() // Cho phép truy cập ảnh động
+    .requestMatchers("/api/**").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .csrf(csrf -> csrf.disable())

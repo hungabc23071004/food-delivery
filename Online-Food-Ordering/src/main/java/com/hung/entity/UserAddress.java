@@ -52,6 +52,13 @@ public class UserAddress {
     @Column(nullable = false, precision = 10, scale = 7)
     BigDecimal longitude;  // kinh độ
 
+    String ward;
+    String wardCode;
+    String district;
+    String districtId;
+    String province;
+    String provinceId;
+
     // Tracking thời gian
     @CreationTimestamp
     LocalDateTime createdAt;
