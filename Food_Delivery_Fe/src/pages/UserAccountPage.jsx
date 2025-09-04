@@ -19,7 +19,7 @@ const UserAccountPage = () => {
         <div className="flex-1">
           <div className="bg-white rounded-xl shadow-lg p-8">
             {active === "profile" && <UserInfo />}
-            {active === "orders" && <UserAddress />}
+            {active === "orders" && <UserAddress active={active} />}
             {active === "payment" && (
               <div className="text-lg font-semibold">
                 Phương thức thanh toán

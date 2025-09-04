@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(Authorize -> Authorize
 //                        .requestMatchers("/admin/**").hasAnyRole("RESTAURANT_OWNER","ADMIN")
                                .requestMatchers("/food/**").permitAll() // Cho phép truy cập ảnh động
-    .requestMatchers("/api/**").authenticated()
+                                .requestMatchers("/api/**").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .csrf(csrf -> csrf.disable())

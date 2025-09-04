@@ -8,39 +8,12 @@ import {
   FaPlus,
   FaStar,
 } from "react-icons/fa";
+import { getUserAddress } from "../api/User_Address";
 
-const mockAddresses = [
-  {
-    name: "nhà 8b",
-    address: "63 Đường 18M, Khu đô thị Mỗ Lao, Hà Đông, Hà Nội, Việt Nam",
-    phone: "0399897208",
-    note: "Giao giờ hành chính",
-    isDefault: true,
-  },
-  {
-    name: "số 4",
-    address: "46/12 Phố Văn Hội, Đức Thắng, Bắc Từ Liêm, Hà Nội, Việt Nam",
-    phone: "0399897208",
-    note: "Gọi trước khi giao",
-    isDefault: false,
-  },
-  {
-    name: "Khách hàng",
-    address:
-      "64 Ng. 105 P. Doãn Kế Thiện, Mai Dịch, Cầu Giấy, Hà Nội, Việt Nam",
-    phone: "0399897208",
-    note: "",
-    isDefault: false,
-  },
-];
-
-const UserAddress = ({
-  addresses = mockAddresses,
-  onEdit,
-  onDelete,
-  onAdd,
-}) => {
+const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
+  console.log("UserAddress active:", active);
   const [showModal, setShowModal] = useState(false);
+  const [addresses, setAddresses] = useState([]);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -62,9 +35,30 @@ const UserAddress = ({
   useEffect(() => {
     fetch("https://provinces.open-api.vn/api/?depth=3")
       .then((res) => res.json())
-      .then((data) => setProvinces(data))
+      .then((data) => {
+        console.log("Provinces fetched:", data);
+        setProvinces(data);
+      })
       .catch((err) => console.error("Lỗi fetch provinces:", err));
   }, []);
+
+  // ✅ Lấy địa chỉ người dùng
+  useEffect(() => {
+    console.log("Gọi getUserAddress");
+    getUserAddress()
+      .then((res) => {
+        const mapped = res.data.result.map((item) => ({
+          name: item.receiverName,
+          address: item.fullAddress,
+          phone: item.phoneNumber,
+          note: item.note,
+          isDefault: item.defaultAddress,
+          // ...thêm các trường khác nếu cần
+        }));
+        setAddresses(mapped);
+      })
+      .catch((err) => console.error("Lỗi lấy địa chỉ:", err));
+  }, [active]);
 
   // ✅ Chọn Tỉnh/TP
   const handleCityChange = (e) => {
