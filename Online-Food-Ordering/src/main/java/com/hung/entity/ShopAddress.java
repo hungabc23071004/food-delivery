@@ -1,6 +1,8 @@
 package com.hung.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,22 +25,21 @@ public class ShopAddress {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    // Địa chỉ đầy đủ (VD: 123 Lý Thường Kiệt, Quận 10, TP.HCM)
-    @Column(nullable = false)
-    String fullAddress;
-
-    // Thông tin bổ sung (tầng, tòa nhà, số phòng...)
-    String detailAddress;
-
-    // Ghi chú thêm (VD: "Cửa hàng nằm trong khu chợ")
-    String note;
-
     // Tọa độ để tính phí ship và khoảng cách
     @Column(nullable = false, precision = 10, scale = 7)
     BigDecimal latitude;   // vĩ độ
 
     @Column(nullable = false, precision = 10, scale = 7)
     BigDecimal longitude;  // kinh độ
+
+    String fullAddress;
+    String detailAddress;
+    String ward;
+    String wardCode;
+    String district;
+    String districtId;
+    String province;
+    String provinceId;
 
 
     // Tracking thời gian

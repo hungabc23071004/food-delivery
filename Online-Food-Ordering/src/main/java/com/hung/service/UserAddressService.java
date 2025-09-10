@@ -68,4 +68,10 @@ public class UserAddressService {
         return userAddressMapper.toUserAddressResponse(userAddressRepository.save(userAddress));
     }
 
+    public UserAddressResponse getUserAddressDetail(String id){
+        return userAddressMapper.toUserAddressResponse(userAddressRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.USER_ADDRESS_NOT_EXISTED)));
+    }
+
+    
+
 }

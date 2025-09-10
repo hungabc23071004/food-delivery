@@ -8,12 +8,19 @@ import {
   FaPlus,
   FaStar,
 } from "react-icons/fa";
-import { getUserAddress } from "../api/User_Address";
+import {
+  getUserAddress,
+  createUserAddress,
+  getUserAddressDetail,
+  deleteUserAddress,
+  updateUserAddress,
+} from "../api/User_Address";
 
 const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
   console.log("UserAddress active:", active);
   const [showModal, setShowModal] = useState(false);
   const [addresses, setAddresses] = useState([]);
+  const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -43,21 +50,25 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
   }, []);
 
   // ✅ Lấy địa chỉ người dùng
-  useEffect(() => {
-    console.log("Gọi getUserAddress");
+  const reloadAddresses = () => {
     getUserAddress()
       .then((res) => {
         const mapped = res.data.result.map((item) => ({
+          id: item.id,
           name: item.receiverName,
           address: item.fullAddress,
           phone: item.phoneNumber,
           note: item.note,
           isDefault: item.defaultAddress,
-          // ...thêm các trường khác nếu cần
+          // ...các trường khác
         }));
         setAddresses(mapped);
       })
       .catch((err) => console.error("Lỗi lấy địa chỉ:", err));
+  };
+
+  useEffect(() => {
+    reloadAddresses();
   }, [active]);
 
   // ✅ Chọn Tỉnh/TP
@@ -106,22 +117,115 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
   };
 
   // ✅ Submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const { street, ward, district, city } = form;
+    const {
+      street, // detailAddress
+      ward,
+      wardCode,
+      district,
+      districtCode, // districtId
+      city, // province
+      cityCode, // provinceId
+      fullName, // receiverName
+      phone, // phoneNumber
+      note,
+      isDefault, // defaultAddress
+      addressType,
+      latitude,
+      longitude,
+    } = form;
     const fullAddress = `${street}, ${ward}, ${district}, ${city}`;
-
-    const finalData = {
-      ...form,
-      address: fullAddress,
+    const data = {
+      fullAddress,
+      detailAddress: street,
+      receiverName: fullName,
+      phoneNumber: phone,
+      note,
+      defaultAddress: isDefault,
+      latitude: latitude || 0,
+      longitude: longitude || 0,
+      ward,
+      wardCode,
+      district,
+      districtId: districtCode,
+      province: city,
+      provinceId: cityCode,
+      addressType,
     };
-
-    alert("Đã thêm địa chỉ!\n" + JSON.stringify(finalData, null, 2));
-    setShowModal(false);
-
-    if (onAdd) onAdd(finalData);
+    try {
+      if (editId) {
+        await updateUserAddress(editId, data);
+      } else {
+        await createUserAddress(data);
+        if (onAdd) onAdd(data);
+      }
+      setShowModal(false);
+      reloadAddresses();
+    } catch (err) {
+      alert(editId ? "Lỗi khi cập nhật địa chỉ!" : "Lỗi khi thêm địa chỉ!");
+      console.error(err);
+    }
   };
+
+  const handleEdit = async (idx) => {
+    const address = addresses[idx];
+    setEditId(address.id);
+    try {
+      const res = await getUserAddressDetail(address.id);
+      const detail = res.data.result;
+      setForm({
+        fullName: detail.receiverName || "",
+        phone: detail.phoneNumber || "",
+        city: detail.province || "",
+        cityCode: detail.provinceId || "",
+        district: detail.district || "",
+        districtCode: detail.districtId || "",
+        ward: detail.ward || "",
+        wardCode: detail.wardCode || "",
+        street: detail.detailAddress || "",
+        note: detail.note || "",
+        addressType: detail.addressType || "Văn Phòng",
+        isDefault: detail.defaultAddress || false,
+        latitude: detail.latitude || 0,
+        longitude: detail.longitude || 0,
+      });
+      // Map lại districts và wards
+      const province = provinces.find(
+        (p) =>
+          p.name === detail.province ||
+          p.code.toString() === detail.provinceId?.toString()
+      );
+      setDistricts(province ? province.districts : []);
+      const district =
+        province && province.districts
+          ? province.districts.find(
+              (d) =>
+                d.name === detail.district ||
+                d.code.toString() === detail.districtId?.toString()
+            )
+          : null;
+      setWards(district ? district.wards : []);
+      setShowModal(true);
+    } catch (err) {
+      alert("Không lấy được thông tin địa chỉ!");
+      console.error(err);
+    }
+  };
+
+  const handleDelete = async (idx) => {
+    const address = addresses[idx];
+    if (!window.confirm("Bạn có chắc muốn xóa địa chỉ này?")) return;
+    try {
+      await deleteUserAddress(address.id);
+      reloadAddresses(); // Reload lại danh sách sau khi xóa
+    } catch (err) {
+      alert("Xóa địa chỉ thất bại!");
+      console.error(err);
+    }
+  };
+
+  const isEditMode = editId !== null;
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto">
@@ -181,13 +285,13 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
                   <div className="flex gap-3">
                     <button
                       className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm"
-                      onClick={() => onEdit && onEdit(idx)}
+                      onClick={() => handleEdit(idx)}
                     >
                       <FaEdit /> Sửa
                     </button>
                     <button
                       className="text-red-500 hover:text-red-700 flex items-center gap-1 text-sm"
-                      onClick={() => onDelete && onDelete(idx)}
+                      onClick={() => handleDelete(idx)}
                     >
                       <FaTrashAlt /> Xoá
                     </button>
@@ -203,7 +307,28 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
       <div className="flex justify-end mt-6">
         <button
           className="bg-[#cc3333] hover:bg-[#b82d2d] text-white px-7 py-2 rounded-lg font-semibold flex items-center gap-2 shadow text-base"
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setEditId(null);
+            setForm({
+              fullName: "",
+              phone: "",
+              city: "",
+              cityCode: "",
+              district: "",
+              districtCode: "",
+              ward: "",
+              wardCode: "",
+              street: "",
+              note: "",
+              addressType: "Văn Phòng",
+              isDefault: false,
+              latitude: 0,
+              longitude: 0,
+            });
+            setDistricts([]);
+            setWards([]);
+            setShowModal(true);
+          }}
         >
           <FaPlus /> THÊM
         </button>
@@ -351,7 +476,7 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
 
               {/* Loại địa chỉ */}
               <div className="col-span-2 flex gap-4">
-                {["Văn Phòng", "Nhà Riêng", "Khác"].map((type) => (
+                {["HOME", "WORK", "OTHER"].map((type) => (
                   <label key={type} className="flex items-center space-x-2">
                     <input
                       type="radio"
@@ -379,7 +504,7 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
                   type="submit"
                   className="px-4 py-2 bg-[#d32f2f] text-white rounded-lg hover:bg-red-700 shadow"
                 >
-                  Hoàn thành
+                  {editId ? "Cập nhật" : "Thêm mới"}
                 </button>
               </div>
             </form>

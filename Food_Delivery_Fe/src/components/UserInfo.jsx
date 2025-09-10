@@ -72,7 +72,6 @@ const UserInfo = () => {
 
     try {
       await updateUser(req);
-      alert("Cập nhật thông tin thành công!");
       fetchUser(); // reload lại form
     } catch (err) {
       console.error(err);
@@ -129,7 +128,6 @@ const UserInfo = () => {
                   avatarUrl: res.result,
                 }));
               }
-              alert("Cập nhật ảnh thành công!");
               navigate(0); // reload trang
             } catch (err) {
               console.error(err);

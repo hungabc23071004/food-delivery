@@ -5,7 +5,7 @@ import com.hung.dto.response.ShopCategoryResponse;
 import com.hung.entity.ShopCategory;
 import com.hung.exception.AppException;
 import com.hung.exception.ErrorCode;
-import com.hung.mapper.ShopCategoryMapper;
+import com.hung.mapper.ShopMapper;
 import com.hung.repository.ShopCategoryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ShopCategoryService {
       ShopCategoryRepository shopCategoryRepository;
-      ShopCategoryMapper shopCategoryMapper;
+      ShopMapper shopMapper;
     private static final Path CURRENT_FOLDER = Paths.get(System.getProperty("user.dir"));
 
 
@@ -42,23 +42,23 @@ public class ShopCategoryService {
             os.write(shopCategoryRequest.getLogoUrl().getBytes());
         }
 
-        ShopCategory shopCategory = shopCategoryMapper.toShopCategory(shopCategoryRequest);
+        ShopCategory shopCategory = shopMapper.toShopCategory(shopCategoryRequest);
         if(shopCategoryRequest.getCategoryId()!=null && !shopCategoryRequest.getCategoryId().equals("")){
             ShopCategory shopCategoryMain = shopCategoryRepository.findById(shopCategoryRequest.getCategoryId()).orElseThrow(()-> new AppException(ErrorCode.SHOP_CATEGORY_NOT_EXISTED));
             shopCategory.setParent(shopCategoryMain);
         }
         shopCategory.setLogoUrl(shopCategoryRequest.getLogoUrl().getOriginalFilename().toString());
-         return shopCategoryMapper.toShopCategoryResponse(shopCategoryRepository.save(shopCategory));
+         return shopMapper.toShopCategoryResponse(shopCategoryRepository.save(shopCategory));
 
       }
 
 
       public List<ShopCategoryResponse> getAllShopCategoriesRoot(){
-            return shopCategoryMapper.toShopCategoryResponseList(shopCategoryRepository.findByParentIdIsNull());
+            return shopMapper.toShopCategoryResponseList(shopCategoryRepository.findByParentIdIsNull());
       }
 
       public List<ShopCategoryResponse>  getShopCategoriesByParentId(String parentId){
-            return shopCategoryMapper.toShopCategoryResponseList(shopCategoryRepository.findByParentId(parentId));
+            return shopMapper.toShopCategoryResponseList(shopCategoryRepository.findByParentId(parentId));
       }
 
 }

@@ -25,6 +25,11 @@ export const deleteUserAddress = async (id) => {
   });
 };
 
+// Lấy chi tiết địa chỉ người dùng
+export const getUserAddressDetail = async (id) => {
+  return axios.get(`${USER_ADDRESS_API}/${id}`, { headers: getAuthHeader() });
+};
+
 // Cập nhật địa chỉ người dùng
 export const updateUserAddress = async (id, data) => {
   return axios.put(`${USER_ADDRESS_API}/${id}`, data, {

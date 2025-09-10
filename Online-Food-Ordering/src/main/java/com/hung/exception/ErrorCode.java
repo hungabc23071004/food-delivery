@@ -19,7 +19,6 @@ public enum ErrorCode {
     INGREDIENT_CATEGORY_NOT_EXISTED(1011, "Ingredient category does not exist", HttpStatus.NOT_FOUND),
     INGREDIENT_NOT_EXISTED(1012, "Ingredient does not exist", HttpStatus.NOT_FOUND),
     FOOD_NOT_EXISTED(1013, "Food does not exist", HttpStatus.NOT_FOUND),
-    CATEGORY_NOT_EXISTED(1014,"Category does not exist" , HttpStatus.NOT_FOUND ),
     CART_ITEM_NOT_EXISTED(1015,"Cart item does not exist", HttpStatus.NOT_FOUND),
     ORSER_NOT_EXISTED(1016,"Series does not exist", HttpStatus.NOT_FOUND),
     CART_EMPTY(1017,"Cart is empty", HttpStatus.BAD_REQUEST ),
@@ -28,8 +27,8 @@ public enum ErrorCode {
     WRONG_PASSWORD(1021,"Wrong password", HttpStatus.BAD_REQUEST),
     USER_ADDRESS_NOT_EXISTED(1022,"User address does not exist", HttpStatus.NOT_FOUND),
     DO_NOT_DELETE_USER_ADDRESS(1021, "The default address cannot be deleted", HttpStatus.BAD_REQUEST),
-    SHOP_CATEGORY_NOT_EXISTED(1022,"Shop category does not exist", HttpStatus.NOT_FOUND);
-
+    SHOP_CATEGORY_NOT_EXISTED(1022,"Shop category does not exist", HttpStatus.NOT_FOUND),
+    CATEGORY_NOT_EXISTED(1023,"Shop doesn't have this category",HttpStatus.NOT_FOUND);
     private Integer code;
     private String message;
     private HttpStatus httpStatus;

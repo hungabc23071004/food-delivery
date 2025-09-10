@@ -49,5 +49,11 @@ public class UserAddressController {
                 .result(userAddressService.updateUserAddress(id, userAddressRequest))
                 .build();
     }
+    @GetMapping("/{id}")
+    public ApiResponse<UserAddressResponse> getUserAddressDetail(@PathVariable String id) {
+        return ApiResponse.<UserAddressResponse>builder()
+                .result(userAddressService.getUserAddressDetail(id))
+                .build();
+    }
 
 }

@@ -26,13 +26,13 @@ public class Shop {
     @Column(nullable = false, length = 100)
     String name;
 
+    String phoneNumber;
+
     @Column(length = 500)
     String description;
 
-    @ElementCollection
-    @CollectionTable(name = "shop_images", joinColumns = @JoinColumn(name = "shop_id"))
-    @Column(name = "image_url")
-    List<String> images = new ArrayList<>();
+    String logo;
+    String banner;
 
     @Column(nullable = false)
     LocalTime openingTime;
@@ -43,6 +43,8 @@ public class Shop {
     @CreationTimestamp
     @Column(updatable = false)
     LocalDateTime createdAt;
+
+    String status;
 
     @UpdateTimestamp
     LocalDateTime updatedAt;
@@ -78,4 +80,11 @@ public class Shop {
             inverseJoinColumns = @JoinColumn(name = "shop_category_id")
     )
     List<ShopCategory> categories = new ArrayList<>();
+
+    public void setShopAddress(ShopAddress shopAddress) {
+        this.shopAddress = shopAddress;
+        if (shopAddress != null) {
+            shopAddress.setShop(this); // ✅ set 2 chiều ở đây luôn
+        }
+    }
 }

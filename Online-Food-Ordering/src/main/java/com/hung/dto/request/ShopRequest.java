@@ -18,15 +18,15 @@ public class ShopRequest {
    String description;
 
     @NotNull(message = "Opening time is required")
-    private LocalTime openingTime;
+    LocalTime openingTime;
 
     @NotNull(message = "Closing time is required")
-    private LocalTime closingTime;
+    LocalTime closingTime;
 
     // Địa chỉ của shop
     @NotNull(message = "Shop address is required")
-    private ShopAddressRequest address;
+    private ShopAddressRequest shopAddress;
 
-    // Danh mục shop (dùng id của ShopCategory)
-    private List<String> categoryIds;
+    String phoneNumber;
+
 }
