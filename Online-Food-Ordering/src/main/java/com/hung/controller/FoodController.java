@@ -2,6 +2,7 @@ package com.hung.controller;
 
 import com.hung.dto.request.FoodRequest;
 import com.hung.dto.response.ApiResponse;
+import com.hung.dto.response.FoodResponse;
 import com.hung.service.FoodService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,14 @@ public class FoodController {
         foodService.createFood(foodRequest);
         return ApiResponse.<String>builder()
                 .result("Food is created successfully")
+                .build();
+    }
+
+
+    @GetMapping("/{id}")
+    public ApiResponse<List<FoodResponse>> getFoodByCategoryId(@PathVariable String id) {
+        return ApiResponse.<List<FoodResponse>>builder()
+                .result(foodService.getFoodByCategoryId(id))
                 .build();
     }
 

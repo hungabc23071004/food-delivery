@@ -13,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 public class ShoppAddressResponse {
      String fullAddress;
      String detailAddress;
-     String phoneNumber;
      String ward;
      String district;
      String province;

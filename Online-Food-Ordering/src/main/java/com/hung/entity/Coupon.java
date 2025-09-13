@@ -1,5 +1,7 @@
 package com.hung.entity;
 
+import com.hung.enums.CouponType;
+import com.hung.enums.DiscountType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

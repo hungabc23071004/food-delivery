@@ -11,6 +11,7 @@ import java.util.List;
 public interface ShopCategoryRepository extends JpaRepository<ShopCategory, String> {
     List<ShopCategory> findByParentIdIsNull();
 
+    List<ShopCategory> findAllByIdIn(List<String> ids);
 
     List<ShopCategory> findByParentId(String  parentId);
 

@@ -22,5 +22,5 @@ public class ShopResponse {
     LocalTime openingTime;
     LocalTime closingTime;
     ShoppAddressResponse shopAddress;
-
+    String status;
 }

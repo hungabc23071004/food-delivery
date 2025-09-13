@@ -1,6 +1,7 @@
 package com.hung.entity;
 
 
+import com.hung.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

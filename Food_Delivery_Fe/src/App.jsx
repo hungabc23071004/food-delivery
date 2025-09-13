@@ -7,6 +7,7 @@ import RegisterForm from "./components/RegisterForm";
 import VerifyAccount from "./components/VerifyAccount";
 import UserAccountPage from "./pages/UserAccountPage";
 import CategoryPage from "./pages/CategoryPage";
+import ShopDetailPage from "./pages/ShopDetailPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/verification" element={<VerifyAccount />} />
         <Route path="/account/profile" element={<UserAccountPage />} />
         <Route path="/category" element={<CategoryPage />} />
+        <Route path="/restaurant" element={<ShopDetailPage />} />
       </Routes>
     </>
   );

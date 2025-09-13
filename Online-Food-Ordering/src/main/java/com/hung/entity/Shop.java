@@ -1,5 +1,6 @@
 package com.hung.entity;
 
+import com.hung.enums.ShopStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -44,7 +45,8 @@ public class Shop {
     @Column(updatable = false)
     LocalDateTime createdAt;
 
-    String status;
+    @Enumerated(EnumType.STRING)
+    private ShopStatus status;
 
     @UpdateTimestamp
     LocalDateTime updatedAt;

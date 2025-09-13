@@ -36,4 +36,6 @@ public interface ShopMapper {
     Category  toCategory(CategoryRequest shopCategoryRequest);
     CategoryResponse toCategoryResponse(Category category);
     List<CategoryResponse> toCategoryResponseList(List<Category> categoryList);
+
+    List<ShopResponse> toShopResponseList(List<Shop> shopList);
 }

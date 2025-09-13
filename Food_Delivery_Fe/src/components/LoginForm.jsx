@@ -23,7 +23,7 @@ const LoginForm = () => {
         "user",
         JSON.stringify({ username, role: res.result?.role })
       );
-      alert("Đăng nhập thành công!");
+
       navigate("/");
     } catch (err) {
       setError("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");

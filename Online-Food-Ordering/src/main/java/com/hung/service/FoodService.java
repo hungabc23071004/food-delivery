@@ -2,6 +2,8 @@ package com.hung.service;
 
 import com.hung.dto.request.FoodOptionGroupRequest;
 import com.hung.dto.request.FoodRequest;
+import com.hung.dto.response.FoodOptionGroupResponse;
+import com.hung.dto.response.FoodOptionResponse;
 import com.hung.dto.response.FoodResponse;
 import com.hung.entity.*;
 import com.hung.exception.AppException;
@@ -94,4 +96,20 @@ public class FoodService {
         foodRepository.save(food);
     }
 
+    public List<FoodResponse> getFoodByCategoryId(String id) {
+        List<Food> foodList = foodRepository.findByCategory_Id(id);
+        List<FoodResponse> responseList = new ArrayList<>();
+        for (Food food : foodList) {
+            FoodResponse response = foodMapper.toFoodResponse(food);
+            for(FoodOptionGroup group : food.getOptionGroup()) {
+                FoodOptionGroupResponse groupResponse = foodMapper.toFoodOptionGroupResponse(group);
+                for(FoodOption option : group.getOptions()) {
+                    FoodOptionResponse optionResponse = foodMapper.toFoodOptionResponse(option);
+                    groupResponse.getOptions().add(optionResponse);
+                }
+            }
+            responseList.add(response);
+        }
+        return responseList;
+    }
 }

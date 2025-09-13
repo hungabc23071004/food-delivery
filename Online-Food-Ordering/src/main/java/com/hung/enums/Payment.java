@@ -1,4 +1,4 @@
-package com.hung.entity;
+package com.hung.enums;
 
 import lombok.Getter;
 

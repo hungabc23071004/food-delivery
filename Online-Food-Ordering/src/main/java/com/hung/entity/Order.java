@@ -1,4 +1,6 @@
 package com.hung.entity;
+import com.hung.enums.OrderStatus;
+import com.hung.enums.Payment;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

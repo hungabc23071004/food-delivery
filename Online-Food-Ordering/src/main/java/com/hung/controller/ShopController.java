@@ -1,7 +1,6 @@
 package com.hung.controller;
 
-import com.hung.dto.request.CategoryRequest;
-import com.hung.dto.request.ShopRequest;
+import com.hung.dto.request.*;
 import com.hung.dto.response.ApiResponse;
 import com.hung.dto.response.CategoryResponse;
 import com.hung.dto.response.ShopResponse;
@@ -10,8 +9,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -44,6 +45,33 @@ public class ShopController {
                 .build();
     }
 
+    @PostMapping(value = "/decorate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ApiResponse<ShopResponse> decorateShop (@ModelAttribute ShopDecorationRequest shopRequest) throws IOException {
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.decorateShop(shopRequest))
+                .build();
+    }
 
+    @PostMapping("/pick/category")
+    ApiResponse<ShopResponse> pickCategoryForShop (@RequestBody CategoryForShopRequest shopCategoryRequest)  {
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.pickCategoryForShop(shopCategoryRequest))
+                .build();
+    }
+
+    @PatchMapping("/change/status")
+    ApiResponse<ShopResponse> changeShopStatus(){
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.changeStatus())
+                .build();
+    }
+
+    @GetMapping("/category/{id}")
+    ApiResponse<List<ShopResponse>> getShopByCategoryId (@PathVariable String  id) {
+        return ApiResponse.<List<ShopResponse>>builder()
+                .result(shopService.getShopByCategoryId(id))
+                .build();
+
+    }
 
 }
