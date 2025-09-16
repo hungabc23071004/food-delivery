@@ -3,6 +3,7 @@ package com.hung.dto.response;
 
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,9 +15,7 @@ public class FoodResponse {
     private Boolean available;
     private LocalDateTime createdAt;
 
-    private String shopId;
-    private String categoryId;
 
-    private List<FoodOptionGroupResponse> optionGroups;
-    private List<String> imageUrls;
+    private List<FoodOptionGroupResponse> optionGroups = new ArrayList<>();
+    private List<String> images  = new ArrayList<>();
 }

@@ -28,7 +28,8 @@ public enum ErrorCode {
     USER_ADDRESS_NOT_EXISTED(1022,"User address does not exist", HttpStatus.NOT_FOUND),
     DO_NOT_DELETE_USER_ADDRESS(1021, "The default address cannot be deleted", HttpStatus.BAD_REQUEST),
     SHOP_CATEGORY_NOT_EXISTED(1022,"Shop category does not exist", HttpStatus.NOT_FOUND),
-    CATEGORY_NOT_EXISTED(1023,"Shop doesn't have this category",HttpStatus.NOT_FOUND);
+    CATEGORY_NOT_EXISTED(1023,"Shop doesn't have this category",HttpStatus.NOT_FOUND),
+    SHOP_NOT_EXISTED(1024,"Shop does not exist", HttpStatus.NOT_FOUND);
     private Integer code;
     private String message;
     private HttpStatus httpStatus;

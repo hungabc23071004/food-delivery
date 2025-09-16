@@ -14,9 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+
 public class FoodOptionGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
+
     String  id;
     String name ;
     // "Size", "Topping"
@@ -27,5 +31,10 @@ public class FoodOptionGroup {
     @Builder.Default
     @OneToMany(mappedBy = "optionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
      List<FoodOption> options = new ArrayList<>();
+
+    public void addOption(FoodOption option) {
+        options.add(option);
+        option.setOptionGroup(this);
+    }
 }
 

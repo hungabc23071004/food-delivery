@@ -50,8 +50,10 @@ public class FoodService {
         for (FoodOptionGroupRequest groupRequest : foodRequest.getOptionGroup()) {
             FoodOptionGroup group = foodMapper.toFoodOptionGroup(groupRequest);
             List<FoodOption> options = foodMapper.toFoodOption(groupRequest.getOptions());
-            group.setOptions(options);
-            food.getOptionGroup().add(group);
+            for (FoodOption option : options) {
+                group.addOption(option);
+            }
+            food.addOptionGroup(group);
         }
 
         // Gán shop từ user đang login
@@ -89,7 +91,8 @@ public class FoodService {
             FoodImage foodImage = FoodImage.builder()
                     .imageUrl(filename) // chỉ lưu tên file, sau này build URL trả về
                     .build();
-            food.getImages().add(foodImage);
+            food.addImage(foodImage); // dùng method helper
+
         }
 
         // Lưu food
@@ -107,8 +110,14 @@ public class FoodService {
                     FoodOptionResponse optionResponse = foodMapper.toFoodOptionResponse(option);
                     groupResponse.getOptions().add(optionResponse);
                 }
+                response.getOptionGroups().add(groupResponse);
             }
+            for(FoodImage image : food.getImages()){
+                response.getImages().add(image.getImageUrl());
+            }
+
             responseList.add(response);
+
         }
         return responseList;
     }

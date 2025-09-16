@@ -25,7 +25,9 @@ public class Category {
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Food> foods= new ArrayList<>();
 
-    
+    @ManyToOne
+    @JoinColumn(name = "shop_id")
+    Shop shop;
 
 
 }

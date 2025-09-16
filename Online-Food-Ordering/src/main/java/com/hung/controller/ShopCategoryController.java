@@ -20,7 +20,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class ShopCategoryController {
-
+// phân loại shop theo category hệ thống
     ShopCategoryService shopCategoryService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

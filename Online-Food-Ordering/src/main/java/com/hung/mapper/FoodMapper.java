@@ -17,13 +17,21 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface FoodMapper {
     @Mapping(target="optionGroup", ignore = true)
+    @Mapping(target = "images", ignore = true)
     Food toFood(FoodRequest food);
+
+    @Mapping(target = "options", ignore = true)
     FoodOptionGroup toFoodOptionGroup(FoodOptionGroupRequest foodOptionGroup);
     FoodOption toFoodOption(FoodOptionRequest foodOption);
     List<FoodOptionGroup> toFoodOptionGroup(List<FoodOptionGroupRequest> foodOptionGroup);
     List<FoodOption>  toFoodOption(List<FoodOptionRequest> foodOption);
 
     FoodOptionResponse toFoodOptionResponse(FoodOption foodOption);
+
+    @Mapping(target = "options", ignore = true)
     FoodOptionGroupResponse toFoodOptionGroupResponse(FoodOptionGroup foodOptionGroup);
+
+    @Mapping(target = "images", ignore = true)
+    @Mapping(target = "optionGroups",ignore = true)
     FoodResponse toFoodResponse(Food food);
 }

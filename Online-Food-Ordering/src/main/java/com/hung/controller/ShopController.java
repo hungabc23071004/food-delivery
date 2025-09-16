@@ -9,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,19 +34,7 @@ public class ShopController {
                 .build();
     }
 
-    @PostMapping("/category")
-    ApiResponse<Object> createShopCategory (@RequestBody CategoryRequest request) {
-        return ApiResponse.builder()
-                .result(shopService.createCategory(request))
-                .build();
-    }
 
-    @GetMapping("/category")
-    ApiResponse<List<CategoryResponse>> getShopCategory () {
-        return ApiResponse.<List<CategoryResponse>>builder()
-                .result(shopService.getAllCategories())
-                .build();
-    }
 
     @PostMapping(value = "/decorate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ApiResponse<ShopResponse> decorateShop (@ModelAttribute ShopDecorationRequest shopRequest) throws IOException {
@@ -73,5 +64,23 @@ public class ShopController {
                 .build();
 
     }
+    @GetMapping
+    ApiResponse<Page<ShopResponse>> getAllShop (
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "25") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.<Page<ShopResponse>>builder()
+                .result(shopService.getAllShop(pageable))
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    ApiResponse<ShopResponse> getShopByid (@PathVariable String id) {
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.getShopById(id))
+                .build();
+    }
+
 
 }

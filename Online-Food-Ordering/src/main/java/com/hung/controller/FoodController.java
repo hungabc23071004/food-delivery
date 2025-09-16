@@ -36,7 +36,7 @@ public class FoodController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/category/{id}")
     public ApiResponse<List<FoodResponse>> getFoodByCategoryId(@PathVariable String id) {
         return ApiResponse.<List<FoodResponse>>builder()
                 .result(foodService.getFoodByCategoryId(id))

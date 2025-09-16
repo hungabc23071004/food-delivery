@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { getShopById } from "../api/Shop";
+import { getCategoryOfShopByShopId } from "../api/CategoryOfShop";
 import ShopInfo from "../components/ShopInfo";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -7,63 +10,36 @@ import ProductCard from "../components/ProductCard";
 import { FaSearch } from "react-icons/fa";
 
 const ShopDetailPage = () => {
+  const { id } = useParams();
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [shop, setShop] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Danh mục
-  const categories = [
-    { id: "all", name: "Tất cả", icon: "🍽️" },
-    { id: "Khuyến mãi", name: "Khuyến mãi", icon: "🔥" },
-    { id: "Đồ uống", name: "Đồ uống", icon: "🥤" },
-  ];
+  const [categories, setCategories] = useState([]);
 
-  // Danh sách món ăn
+  // Danh sách món ăn (giữ nguyên demo)
   const foods = [
-    {
-      id: 1,
-      category: "Khuyến mãi",
-      name: "Combo Sundae Mê Ly",
-      description:
-        "01 Super Sundae Trân châu đường đen + 01 Lucky Sundae Ococo",
-      price: 50000,
-      originalPrice: 56000,
-      sold: 5,
-      likes: 20,
-      remaining: "Còn lại 3 suất",
-      badge: "Giảm giá",
-      image:
-        "https://hopdungthucan.com/wp-content/uploads/2022/05/hinh-anh-tra-sua-dep-tuyet-800x800.jpg",
-    },
-    {
-      id: 2,
-      category: "Đồ uống",
-      name: "Tiếp sức diệu binh",
-      description: "02 Nước chanh tươi lạnh, gấp đôi Vitamin C",
-      price: 29000,
-      originalPrice: 36000,
-      sold: 4,
-      likes: 15,
-      remaining: "",
-      badge: "Hot",
-      image:
-        "https://hopdungthucan.com/wp-content/uploads/2022/05/hinh-anh-tra-sua-dep-tuyet-800x800.jpg",
-    },
-    {
-      id: 3,
-      category: "Đồ uống",
-      name: "Combo Summer Fresh",
-      description:
-        "01 Trà sữa trân châu M + 01 Trà sữa bá vương + 01 Nước chanh",
-      price: 71000,
-      originalPrice: 79000,
-      sold: 2,
-      likes: 10,
-      remaining: "",
-      badge: "",
-      image:
-        "https://hopdungthucan.com/wp-content/uploads/2022/05/hinh-anh-tra-sua-dep-tuyet-800x800.jpg",
-    },
+    // ...existing code...
   ];
+
+  useEffect(() => {
+    const fetchShopAndCategories = async () => {
+      try {
+        setLoading(true);
+        const shopData = await getShopById(id);
+        setShop(shopData.result || null);
+        const categoryData = await getCategoryOfShopByShopId(id);
+        setCategories(categoryData.result || []);
+      } catch (err) {
+        setError("Không thể tải thông tin shop hoặc danh mục");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) fetchShopAndCategories();
+  }, [id]);
 
   // Lọc theo tìm kiếm + category
   const filteredFoods = foods.filter(
@@ -78,7 +54,16 @@ const ShopDetailPage = () => {
     <>
       <Header />
       <div className="pb-20 bg-gradient-to-br from-orange-50 via-white to-orange-100 min-h-screen">
-        <ShopInfo />
+        {/* Hiển thị loading hoặc lỗi */}
+        {loading ? (
+          <div className="text-center py-8 text-gray-500">
+            Đang tải thông tin shop...
+          </div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">{error}</div>
+        ) : shop ? (
+          <ShopInfo shop={shop} />
+        ) : null}
 
         {/* Thanh phân cách */}
         <div className="w-full h-1 bg-gradient-to-r from-orange-300 via-orange-100 to-orange-300 rounded-full my-8 shadow-md"></div>

@@ -20,7 +20,7 @@ function App() {
         <Route path="/verification" element={<VerifyAccount />} />
         <Route path="/account/profile" element={<UserAccountPage />} />
         <Route path="/category" element={<CategoryPage />} />
-        <Route path="/restaurant" element={<ShopDetailPage />} />
+        <Route path="/shop/:id" element={<ShopDetailPage />} />
       </Routes>
     </>
   );

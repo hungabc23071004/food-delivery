@@ -13,9 +13,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+
 public class FoodOption {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
+
     String  id;
 
     private String optionName;  // "Size L", "Thêm trân châu"
@@ -27,4 +31,6 @@ public class FoodOption {
     @ManyToOne
     @JoinColumn(name= "cart_item_id")
     CartItem cartItem;
+
+
 }

@@ -1,13 +1,22 @@
 import React from "react";
 import { MapPin, Tag } from "lucide-react";
-const RestaurantCart = ({ image, name, address, discount }) => {
+import { Link } from "react-router-dom";
+const RestaurantCart = ({ image, name, address, discount, status, id }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+    <Link
+      to={`/shop/${id}`}
+      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition"
+    >
       {/* Hình ảnh */}
       <div className="relative">
         <img src={image} alt={name} className="w-full h-40 object-cover" />
-        {/* Chấm trạng thái (online) */}
-        <span className="absolute top-2 left-2 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+        {/* Chấm trạng thái: xanh cho ONLINE, xám cho OFFLINE */}
+        {status === "ONLINE" && (
+          <span className="absolute top-2 left-2 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+        )}
+        {status === "OFFLINE" && (
+          <span className="absolute top-2 left-2 w-3 h-3 bg-gray-400 rounded-full border border-white"></span>
+        )}
       </div>
 
       {/* Nội dung */}
@@ -26,7 +35,7 @@ const RestaurantCart = ({ image, name, address, discount }) => {
           </div>
         )}
       </div>
-    </div>
+    </Link>
   );
 };
 

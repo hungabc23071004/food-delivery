@@ -3,3 +3,5 @@ export const AUTH_API = `${BASE_URL}/auth`;
 export const USER_API = `${BASE_URL}/users`;
 export const CATEGORY_API = `${BASE_URL}/shop_category`;
 export const USER_ADDRESS_API = `${BASE_URL}/user_address`;
+export const SHOP_API = `${BASE_URL}/shop`;
+export const CATEGORY_OF_SHOP_API = `${BASE_URL}/category`;

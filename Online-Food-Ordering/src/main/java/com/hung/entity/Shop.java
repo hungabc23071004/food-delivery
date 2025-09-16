@@ -82,11 +82,13 @@ public class Shop {
             inverseJoinColumns = @JoinColumn(name = "shop_category_id")
     )
     List<ShopCategory> categories = new ArrayList<>();
-
+    @OneToMany(mappedBy = "shop")
+    List<Category> categoryOfShop;
     public void setShopAddress(ShopAddress shopAddress) {
         this.shopAddress = shopAddress;
         if (shopAddress != null) {
             shopAddress.setShop(this); // ✅ set 2 chiều ở đây luôn
         }
     }
+
 }

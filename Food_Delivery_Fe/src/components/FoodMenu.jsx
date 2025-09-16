@@ -1,4 +1,5 @@
 import React from "react";
+import { MdRestaurantMenu } from "react-icons/md";
 
 const FoodMenu = ({ categories, selectedCategory, onSelect }) => {
   return (
@@ -15,6 +16,7 @@ const FoodMenu = ({ categories, selectedCategory, onSelect }) => {
                 : "hover:bg-orange-100 hover:text-orange-600"
             }`}
           >
+            <MdRestaurantMenu className="text-orange-500 text-xl" />
             <span className="text-xl">{cat.icon}</span> {cat.name}
           </li>
         ))}

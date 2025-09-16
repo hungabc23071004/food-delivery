@@ -3,6 +3,7 @@ package com.hung.service;
 import com.hung.dto.request.*;
 import com.hung.dto.response.CategoryResponse;
 import com.hung.dto.response.ShopResponse;
+import com.hung.entity.Category;
 import com.hung.entity.Shop;
 import com.hung.entity.ShopCategory;
 import com.hung.entity.User;
@@ -18,8 +19,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,18 +52,20 @@ public class ShopService {
         shop.setShopAddress(shopMapper.toShopAddress(shopRequest.getShopAddress()));
         User user= userRepository.findByUsernameAndActive(SecurityContextHolder.getContext().getAuthentication().getName(), true).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
         shop.setUser(user);
+        shop.setStatus(ShopStatus.ONLINE);
         shopRepository.save(shop);
         return shopMapper.toShopResponse(shop);
     }
 
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
-        return shopMapper.toCategoryResponse(categoryRepository.save(shopMapper.toCategory(categoryRequest))) ;
+        Category category =shopMapper.toCategory(categoryRequest);
+        User user= userRepository.findByUsernameAndActive(SecurityContextHolder.getContext().getAuthentication().getName(), true).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        category.setShop(user.getShop());
+        return shopMapper.toCategoryResponse(categoryRepository.save(category));
     }
 
 
-    public List<CategoryResponse> getAllCategories() {
-        return shopMapper.toCategoryResponseList(categoryRepository.findAll());
-    }
+
 
     public ShopResponse decorateShop(ShopDecorationRequest shopRequest) throws IOException {
 
@@ -111,4 +118,18 @@ public class ShopService {
     public List<ShopResponse> getShopByCategoryId(String id) {
         return shopMapper.toShopResponseList(shopRepository.findByCategories_Id(id));
     }
+
+    public Page<ShopResponse> getAllShop(Pageable pageable) {
+        return shopRepository.findAll(pageable).map(shopMapper::toShopResponse);
+    }
+
+    public ShopResponse getShopById(String id) {
+        return shopMapper.toShopResponse(shopRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.SHOP_NOT_EXISTED)));
+    }
+
+    public List<CategoryResponse> getCategoryByShopId(String id) {
+        return shopMapper.toCategoryResponseList(categoryRepository.findByShop_Id(id));
+    }
+
+
 }
