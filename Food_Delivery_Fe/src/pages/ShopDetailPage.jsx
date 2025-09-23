@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getShopById } from "../api/Shop";
 import { getCategoryOfShopByShopId } from "../api/CategoryOfShop";
+import { getFoodByCategoryId } from "../api/Food";
+import { MdRestaurantMenu } from "react-icons/md";
 import ShopInfo from "../components/ShopInfo";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -18,11 +20,8 @@ const ShopDetailPage = () => {
   const [error, setError] = useState(null);
 
   const [categories, setCategories] = useState([]);
-
-  // Danh sách món ăn (giữ nguyên demo)
-  const foods = [
-    // ...existing code...
-  ];
+  const [foodsByCategory, setFoodsByCategory] = useState({});
+  const categoryRefs = useRef({});
 
   useEffect(() => {
     const fetchShopAndCategories = async () => {
@@ -32,7 +31,7 @@ const ShopDetailPage = () => {
         setShop(shopData.result || null);
         const categoryData = await getCategoryOfShopByShopId(id);
         setCategories(categoryData.result || []);
-      } catch (err) {
+      } catch {
         setError("Không thể tải thông tin shop hoặc danh mục");
       } finally {
         setLoading(false);
@@ -41,14 +40,46 @@ const ShopDetailPage = () => {
     if (id) fetchShopAndCategories();
   }, [id]);
 
-  // Lọc theo tìm kiếm + category
-  const filteredFoods = foods.filter(
-    (food) =>
-      food.name.toLowerCase().includes(search.toLowerCase()) &&
-      (selectedCategory === null ||
-        selectedCategory === "all" ||
-        food.category === selectedCategory)
-  );
+  // Khi categories thay đổi, gọi API lấy foods cho từng category
+  useEffect(() => {
+    const fetchFoods = async () => {
+      if (!categories || categories.length === 0) return;
+      setLoading(true);
+      try {
+        const foodsObj = {};
+        for (const cat of categories) {
+          const foodRes = await getFoodByCategoryId(cat.id);
+          foodsObj[cat.id] = foodRes.result || [];
+        }
+        setFoodsByCategory(foodsObj);
+      } catch {
+        setError("Không thể tải danh sách món ăn");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFoods();
+  }, [categories]);
+
+  // Lọc theo search (KHÔNG lọc theo selectedCategory nữa)
+  const filteredFoodsByCategory = {};
+  Object.entries(foodsByCategory).forEach(([catId, foods]) => {
+    filteredFoodsByCategory[catId] = foods.filter((food) =>
+      food.name.toLowerCase().includes(search.toLowerCase())
+    );
+  });
+
+  // Scroll tới danh mục
+  const scrollToCategory = (catId) => {
+    setTimeout(() => {
+      if (categoryRefs.current[catId]) {
+        categoryRefs.current[catId].scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 100);
+  };
 
   return (
     <>
@@ -76,7 +107,10 @@ const ShopDetailPage = () => {
               <FoodMenu
                 categories={categories}
                 selectedCategory={selectedCategory}
-                onSelect={setSelectedCategory}
+                onSelect={(catId) => {
+                  setSelectedCategory(catId);
+                  scrollToCategory(catId);
+                }}
               />
             </div>
           </div>
@@ -101,32 +135,37 @@ const ShopDetailPage = () => {
               </h2>
 
               <div className="space-y-8">
-                {filteredFoods.length > 0 ? (
-                  // Nhóm theo category
-                  Object.entries(
-                    filteredFoods.reduce((acc, food) => {
-                      acc[food.category] = acc[food.category] || [];
-                      acc[food.category].push(food);
-                      return acc;
-                    }, {})
-                  ).map(([category, foods]) => (
-                    <div key={category} className="mb-8">
-                      <h3 className="text-xl font-bold mb-4 text-orange-500 uppercase tracking-wider drop-shadow-lg">
-                        {category}
+                {categories.length > 0 ? (
+                  categories.map((cat) => (
+                    <div
+                      key={cat.id}
+                      className="mb-8 scroll-mt-24" // 👈 thêm offset khi scroll tới
+                      ref={(el) => (categoryRefs.current[cat.id] = el)}
+                    >
+                      <h3 className="text-xl font-bold mb-4 text-orange-500 uppercase tracking-wider drop-shadow-lg flex items-center gap-2">
+                        <MdRestaurantMenu className="text-orange-400" />
+                        {cat.name}
                       </h3>
                       <div className="space-y-4">
-                        {foods.map((food, idx) => (
-                          <div
-                            key={food.id}
-                            className={`transition-all duration-200 bg-gradient-to-r from-white to-orange-50 rounded-2xl shadow-md hover:scale-[1.02] hover:shadow-orange-200 border border-orange-100 p-4 ${
-                              idx % 2 === 0
-                                ? "animate-fade-in-left"
-                                : "animate-fade-in-right"
-                            }`}
-                          >
-                            <ProductCard product={food} />
-                          </div>
-                        ))}
+                        {filteredFoodsByCategory[cat.id] &&
+                        filteredFoodsByCategory[cat.id].length > 0 ? (
+                          filteredFoodsByCategory[cat.id].map((food, idx) => (
+                            <div
+                              key={food.id}
+                              className={`transition-all duration-200 bg-gradient-to-r from-white to-orange-50 rounded-2xl shadow-md hover:scale-[1.02] hover:shadow-orange-200 border border-orange-100 p-4 ${
+                                idx % 2 === 0
+                                  ? "animate-fade-in-left"
+                                  : "animate-fade-in-right"
+                              }`}
+                            >
+                              <ProductCard product={food} />
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-gray-400 text-base">
+                            Không có món nào trong danh mục này.
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))
