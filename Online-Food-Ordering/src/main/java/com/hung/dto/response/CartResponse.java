@@ -12,7 +12,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartResponse {
-    int quantity;
+    String id;
+    Integer quantity;
     double totalPrice;
-    List<CartItemResponse> responseList=new ArrayList<>();
+    List<CartItemResponse> cartItems=new ArrayList<>();
 }

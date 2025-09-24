@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-
 @Entity
 @Getter
 @Setter
@@ -13,22 +11,22 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-
-public class FoodOption {
+public class CartItemFoodOption {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
 
     String  id;
 
-    private String optionName;  // "Size L", "Thêm trân châu"
-    private Double extraPrice;
+    String optionName;  // "Size L", "Thêm trân châu"
+    Double extraPrice;
+
+
     @ManyToOne
-    @JoinColumn(name = "option_group_id")
-    private FoodOptionGroup optionGroup;
+    @JoinColumn(name= "cart_item_id")
+    CartItem cartItem;
 
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "food_option_id")   // thêm quan hệ với FoodOption
+    private FoodOption foodOption;
 }

@@ -21,6 +21,10 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    Integer quantity;
+
+    Double totalPrice;
+
     LocalDateTime addedAt;
     @ManyToOne
     @JoinColumn(name = "user_id")

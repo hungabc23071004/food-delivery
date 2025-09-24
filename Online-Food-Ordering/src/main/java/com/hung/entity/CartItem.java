@@ -32,5 +32,5 @@ public class CartItem {
 
     @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "cartItem")
-    List<FoodOption> foodOptions = new ArrayList<>();
+    List<CartItemFoodOption> foodOptions = new ArrayList<>();
 }
