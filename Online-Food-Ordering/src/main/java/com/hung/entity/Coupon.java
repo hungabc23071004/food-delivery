@@ -50,9 +50,9 @@ public class Coupon {
     @Builder.Default
     @ManyToMany(mappedBy = "coupons")
     List<Order> orders= new ArrayList<>();
-    @Builder.Default
-    @ManyToMany(mappedBy = "coupons")
-    List<OrderShopGroup> orderShopGroups = new ArrayList<>();
+//    @Builder.Default
+//    @ManyToMany(mappedBy = "coupons")
+//    List<OrderShopGroup> orderShopGroups = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "shop_id")

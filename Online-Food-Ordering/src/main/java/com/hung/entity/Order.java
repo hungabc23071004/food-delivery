@@ -43,10 +43,13 @@ public class Order {
             inverseJoinColumns = @JoinColumn(name = "coupon_id")
     )
     List<Coupon> coupons= new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<OrderShopGroup> orderShopGroups= new ArrayList<>();
+    List<OrderItem> orderItems= new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     ShippingAddress shippingAddress;

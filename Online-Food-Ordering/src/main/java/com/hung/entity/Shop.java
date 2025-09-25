@@ -68,7 +68,7 @@ public class Shop {
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderShopGroup> orderShopGroups = new ArrayList<>();
+    private List<Order> orderList = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)

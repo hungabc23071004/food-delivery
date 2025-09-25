@@ -23,11 +23,5 @@ public class OrderItermOption {
     OrderItem orderItem;
 
     String optionName;
-
-    // Giá trị của tùy chọn (Lớn, Trân châu, 50%, Không đá, Cấp độ 3...)
-    String optionValue;
-
-    // Phụ phí thêm cho tùy chọn này (nếu có)
-    @Builder.Default
-    BigDecimal extraPrice = BigDecimal.ZERO;
+    Double extraPrice ;
 }
