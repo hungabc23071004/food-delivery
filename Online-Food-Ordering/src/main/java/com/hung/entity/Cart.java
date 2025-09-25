@@ -4,6 +4,7 @@ import com.hung.enums.CartStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class Cart {
 
     Double totalPrice;
 
+    @CreationTimestamp
     LocalDateTime addedAt;
     @ManyToOne
     @JoinColumn(name = "user_id")

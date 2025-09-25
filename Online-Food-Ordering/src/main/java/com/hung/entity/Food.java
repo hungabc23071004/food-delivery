@@ -3,6 +3,7 @@ package com.hung.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -42,6 +43,7 @@ public class Food {
     List<FoodOptionGroup> optionGroup=new ArrayList<>();
 
     @Builder.Default
+    @BatchSize(size = 5)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "food", cascade = CascadeType.ALL, orphanRemoval = true)
     List<FoodImage> images = new ArrayList<>();
 
