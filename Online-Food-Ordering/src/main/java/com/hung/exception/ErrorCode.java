@@ -30,7 +30,8 @@ public enum ErrorCode {
     SHOP_CATEGORY_NOT_EXISTED(1022,"Shop category does not exist", HttpStatus.NOT_FOUND),
     CATEGORY_NOT_EXISTED(1023,"Shop doesn't have this category",HttpStatus.NOT_FOUND),
     SHOP_NOT_EXISTED(1024,"Shop does not exist", HttpStatus.NOT_FOUND),
-    CART_NOT_EXISTED(1025,"Cart does not exist", HttpStatus.NOT_FOUND);
+    CART_NOT_EXISTED(1025,"Cart does not exist", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(1026,"Order does not exist", HttpStatus.NOT_FOUND);
     private Integer code;
     private String message;
     private HttpStatus httpStatus;

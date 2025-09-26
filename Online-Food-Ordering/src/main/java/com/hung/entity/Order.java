@@ -25,7 +25,7 @@ public class Order {
     String id;
     BigDecimal total;
     BigDecimal shippingFee;
-    BigDecimal subtotal;
+    Double  subtotal;
     BigDecimal totalDiscount;
 
     @CreationTimestamp
