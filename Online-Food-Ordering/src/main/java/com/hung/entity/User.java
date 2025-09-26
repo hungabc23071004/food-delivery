@@ -1,6 +1,7 @@
 package com.hung.entity;
 
 
+import com.hung.enums.AuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -32,6 +33,10 @@ public class User {
     String phone;
     boolean active;
     String avatarUrl;
+    @Enumerated(EnumType.STRING)
+    AuthProvider provider;   // LOCAL, GOOGLE, FACEBOOK
+    String providerId;
+
     @Builder.Default
     @ManyToMany
     List<Role> roles= new ArrayList<>();
