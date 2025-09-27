@@ -26,10 +26,8 @@ public class ShopAddress {
     String id;
 
     // Tọa độ để tính phí ship và khoảng cách
-    @Column(nullable = false, precision = 10, scale = 7)
     BigDecimal latitude;   // vĩ độ
 
-    @Column(nullable = false, precision = 10, scale = 7)
     BigDecimal longitude;  // kinh độ
 
     String fullAddress;

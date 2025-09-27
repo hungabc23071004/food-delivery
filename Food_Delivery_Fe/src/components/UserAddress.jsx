@@ -15,9 +15,10 @@ import {
   deleteUserAddress,
   updateUserAddress,
 } from "../api/User_Address";
+// Thêm import dữ liệu địa phương từ file JSON
+import vietnamData from "../../public/vietnam-admin-2025.json";
 
 const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
-  console.log("UserAddress active:", active);
   const [showModal, setShowModal] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -26,30 +27,29 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
     fullName: "",
     phone: "",
     city: "",
+    cityCode: "",
     district: "",
+    districtCode: "",
     ward: "",
+    wardCode: "",
     street: "",
     note: "",
-    addressType: "Văn Phòng",
+    addressType: "HOME",
     isDefault: false,
+    latitude: 0,
+    longitude: 0,
   });
 
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
 
-  // ✅ Lấy danh sách Tỉnh/TP
+  // Lấy danh sách Tỉnh/TP từ file JSON
   useEffect(() => {
-    fetch("https://provinces.open-api.vn/api/?depth=3")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Provinces fetched:", data);
-        setProvinces(data);
-      })
-      .catch((err) => console.error("Lỗi fetch provinces:", err));
+    setProvinces(vietnamData);
   }, []);
 
-  // ✅ Lấy địa chỉ người dùng
+  // Lấy địa chỉ người dùng
   const reloadAddresses = () => {
     getUserAddress()
       .then((res) => {
@@ -60,7 +60,6 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
           phone: item.phoneNumber,
           note: item.note,
           isDefault: item.defaultAddress,
-          // ...các trường khác
         }));
         setAddresses(mapped);
       })
@@ -71,7 +70,7 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
     reloadAddresses();
   }, [active]);
 
-  // ✅ Chọn Tỉnh/TP
+  // Chọn Tỉnh/TP
   const handleCityChange = (e) => {
     const [code, name] = e.target.value.split("|");
     setForm((prev) => ({
@@ -79,15 +78,17 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
       city: name,
       cityCode: code,
       district: "",
+      districtCode: "",
       ward: "",
+      wardCode: "",
     }));
 
-    const province = provinces.find((p) => p.code.toString() === code);
+    const province = provinces.find((p) => p.province_code === code);
     setDistricts(province ? province.districts : []);
     setWards([]);
   };
 
-  // ✅ Chọn Quận/Huyện
+  // Chọn Quận/Huyện
   const handleDistrictChange = (e) => {
     const [code, name] = e.target.value.split("|");
     setForm((prev) => ({
@@ -95,19 +96,46 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
       district: name,
       districtCode: code,
       ward: "",
+      wardCode: "",
     }));
 
-    const district = districts.find((d) => d.code.toString() === code);
+    const district = districts.find((d) => d.district_code === code);
     setWards(district ? district.wards : []);
   };
 
-  // ✅ Chọn Phường/Xã
-  const handleWardChange = (e) => {
+  // Chọn Phường/Xã và tự động lấy lat/lon từ Nominatim (chuẩn hóa query)
+  const handleWardChange = async (e) => {
     const [code, name] = e.target.value.split("|");
-    setForm((prev) => ({ ...prev, ward: name, wardCode: code }));
+    const newForm = { ...form, ward: name, wardCode: code };
+    setForm(newForm);
+
+    // Nếu đã chọn đủ tỉnh, xã thì gọi API lấy lat/lon
+    if (newForm.city && name) {
+      // Ghép query: ward, city, Việt Nam và thay khoảng trắng bằng dấu +
+      const query = `${name}, ${newForm.city}, Việt Nam`.replace(/ /g, "+");
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`
+        );
+        const data = await res.json();
+        if (data && data.length > 0) {
+          setForm((prev) => ({
+            ...prev,
+            latitude: parseFloat(data[0].lat),
+            longitude: parseFloat(data[0].lon),
+          }));
+        }
+      } catch {
+        setForm((prev) => ({
+          ...prev,
+          latitude: 0,
+          longitude: 0,
+        }));
+      }
+    }
   };
 
-  // ✅ Input khác
+  // Input khác
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -116,21 +144,21 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
     }));
   };
 
-  // ✅ Submit
+  // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const {
-      street, // detailAddress
+      street,
       ward,
       wardCode,
       district,
-      districtCode, // districtId
-      city, // province
-      cityCode, // provinceId
-      fullName, // receiverName
-      phone, // phoneNumber
+      districtCode,
+      city,
+      cityCode,
+      fullName,
+      phone,
       note,
-      isDefault, // defaultAddress
+      isDefault,
       addressType,
       latitude,
       longitude,
@@ -185,7 +213,7 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
         wardCode: detail.wardCode || "",
         street: detail.detailAddress || "",
         note: detail.note || "",
-        addressType: detail.addressType || "Văn Phòng",
+        addressType: detail.addressType || "HOME",
         isDefault: detail.defaultAddress || false,
         latitude: detail.latitude || 0,
         longitude: detail.longitude || 0,
@@ -193,16 +221,16 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
       // Map lại districts và wards
       const province = provinces.find(
         (p) =>
-          p.name === detail.province ||
-          p.code.toString() === detail.provinceId?.toString()
+          p.province_name === detail.province ||
+          p.province_code === detail.provinceId?.toString()
       );
       setDistricts(province ? province.districts : []);
       const district =
         province && province.districts
           ? province.districts.find(
               (d) =>
-                d.name === detail.district ||
-                d.code.toString() === detail.districtId?.toString()
+                d.district_name === detail.district ||
+                d.district_code === detail.districtId?.toString()
             )
           : null;
       setWards(district ? district.wards : []);
@@ -218,7 +246,7 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
     if (!window.confirm("Bạn có chắc muốn xóa địa chỉ này?")) return;
     try {
       await deleteUserAddress(address.id);
-      reloadAddresses(); // Reload lại danh sách sau khi xóa
+      reloadAddresses();
     } catch (err) {
       alert("Xóa địa chỉ thất bại!");
       console.error(err);
@@ -320,7 +348,7 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
               wardCode: "",
               street: "",
               note: "",
-              addressType: "Văn Phòng",
+              addressType: "HOME",
               isDefault: false,
               latitude: 0,
               longitude: 0,
@@ -385,8 +413,11 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
                 >
                   <option value="">Chọn Tỉnh/Thành phố</option>
                   {provinces.map((p) => (
-                    <option key={p.code} value={`${p.code}|${p.name}`}>
-                      {p.name}
+                    <option
+                      key={p.province_code}
+                      value={`${p.province_code}|${p.province_name}`}
+                    >
+                      {p.province_name}
                     </option>
                   ))}
                 </select>
@@ -408,8 +439,11 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
                 >
                   <option value="">Chọn Quận/Huyện</option>
                   {districts.map((d) => (
-                    <option key={d.code} value={`${d.code}|${d.name}`}>
-                      {d.name}
+                    <option
+                      key={d.district_code}
+                      value={`${d.district_code}|${d.district_name}`}
+                    >
+                      {d.district_name}
                     </option>
                   ))}
                 </select>
@@ -427,8 +461,11 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
                 >
                   <option value="">Chọn Phường/Xã</option>
                   {wards.map((w) => (
-                    <option key={w.code} value={`${w.code}|${w.name}`}>
-                      {w.name}
+                    <option
+                      key={w.ward_code}
+                      value={`${w.ward_code}|${w.ward_name}`}
+                    >
+                      {w.ward_name}
                     </option>
                   ))}
                 </select>
