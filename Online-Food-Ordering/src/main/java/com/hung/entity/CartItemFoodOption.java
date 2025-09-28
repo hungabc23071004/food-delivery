@@ -21,7 +21,6 @@ public class CartItemFoodOption {
     String optionName;  // "Size L", "Thêm trân châu"
     Double extraPrice;
 
-
     @ManyToOne
     @JoinColumn(name= "cart_item_id")
     CartItem cartItem;
