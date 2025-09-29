@@ -131,6 +131,7 @@ public class CartService {
                 .price(food.getPrice() + options.stream().mapToDouble(FoodOption::getExtraPrice).sum())
                 .build();
 
+        newItem.getOptions().clear();
         newItem.getOptions().addAll(options);
         cart.getCartItems().add(newItem);
     }

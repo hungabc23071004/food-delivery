@@ -30,13 +30,13 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "food_id")
     Food food;
-
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "cartitem_foodoption",
             joinColumns = @JoinColumn(name = "cart_item_id"),
             inverseJoinColumns = @JoinColumn(name = "food_option_id")
     )
-    List <FoodOption> options;
+    List <FoodOption> options=  new ArrayList<>();
 }
 
