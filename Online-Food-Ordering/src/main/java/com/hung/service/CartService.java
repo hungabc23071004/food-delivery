@@ -46,16 +46,15 @@ public class CartService {
         Food food = foodRepository.findById(request.getFoodId())
                 .orElseThrow(() -> new AppException(ErrorCode.FOOD_NOT_EXISTED));
 
-        List<CartItemFoodOption> cartItemFoodOptions = mapToCartItemFoodOptions(
-                foodOptionRepository.findAllByIdIn(request.getOptionIds())
-        );
+        List<FoodOption > foodOptionList= foodOptionRepository.findAllByIdIn(request.getOptionIds());
+
 
         cart.getCartItems().stream()
-                .filter(item -> hasSameFoodAndOptions(item, food, cartItemFoodOptions))
+                .filter(item -> hasSameFoodAndOptions(item, food, foodOptionList))
                 .findFirst()
                 .ifPresentOrElse(
                         item -> item.setQuantity(item.getQuantity() + request.getQuantity()),
-                        () -> addNewCartItem(cart, food, request.getQuantity(), cartItemFoodOptions)
+                        () -> addNewCartItem(cart, food, request.getQuantity(), foodOptionList)
                 );
 
         recalculateCart(cart);
@@ -122,40 +121,31 @@ public class CartService {
         return cart;
     }
 
-    private List<CartItemFoodOption> mapToCartItemFoodOptions(List<FoodOption> foodOptions) {
-        return foodOptions.stream()
-                .map(option -> CartItemFoodOption.builder()
-                        .optionName(option.getOptionName())
-                        .foodOption(option)
-                        .extraPrice(option.getExtraPrice())
-                        .build())
-                .collect(Collectors.toList());
-    }
 
-    private void addNewCartItem(Cart cart, Food food, int quantity, List<CartItemFoodOption> options) {
+
+    private void addNewCartItem(Cart cart, Food food, int quantity, List<FoodOption> options) {
         CartItem newItem = CartItem.builder()
                 .food(food)
                 .cart(cart)
                 .quantity(quantity)
-                .price(food.getPrice() + options.stream().mapToDouble(CartItemFoodOption::getExtraPrice).sum())
+                .price(food.getPrice() + options.stream().mapToDouble(FoodOption::getExtraPrice).sum())
                 .build();
 
-        newItem.getFoodOptions().addAll(options);
-        options.forEach(opt -> opt.setCartItem(newItem));
+        newItem.getOptions().addAll(options);
         cart.getCartItems().add(newItem);
     }
 
-    private boolean hasSameFoodAndOptions(CartItem item, Food food, List<CartItemFoodOption> options) {
+    private boolean hasSameFoodAndOptions(CartItem item, Food food, List<FoodOption> options) {
         if (!item.getFood().getId().equals(food.getId())) {
             return false;
         }
 
-        Set<String> existingOptionIds = item.getFoodOptions().stream()
-                .map(opt -> opt.getFoodOption().getId())
+        Set<String> existingOptionIds = item.getOptions().stream()
+                .map(opt -> opt.getId())
                 .collect(Collectors.toSet());
 
         Set<String> requestOptionIds = options.stream()
-                .map(opt -> opt.getFoodOption().getId())
+                .map(opt -> opt.getId())
                 .collect(Collectors.toSet());
 
         return existingOptionIds.equals(requestOptionIds);

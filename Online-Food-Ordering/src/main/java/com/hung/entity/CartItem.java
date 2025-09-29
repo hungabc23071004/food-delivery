@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,7 +19,7 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-    
+
     Integer quantity;
     Double price;
 
@@ -28,9 +29,14 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "food_id")
-    Food food; 
+    Food food;
 
-    @Builder.Default
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "cartItem")
-    List<CartItemFoodOption> foodOptions = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+            name = "cartitem_foodoption",
+            joinColumns = @JoinColumn(name = "cart_item_id"),
+            inverseJoinColumns = @JoinColumn(name = "food_option_id")
+    )
+    List <FoodOption> options;
 }
+

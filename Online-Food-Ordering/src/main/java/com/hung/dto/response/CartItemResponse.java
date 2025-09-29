@@ -16,5 +16,5 @@ public class CartItemResponse {
     String imageUrl;
     Double price;
     Integer quantity;
-    List<CartItemFoodOptionResponse> foodOptions=new ArrayList<>();
+    List<FoodOptionResponse> options=new ArrayList<>();
 }
