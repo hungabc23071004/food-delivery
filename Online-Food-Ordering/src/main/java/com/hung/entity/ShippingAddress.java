@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -21,7 +23,13 @@ public class ShippingAddress {
     String phoneNumber;
     String ward;
     String district;
-    String city;
+    String province;
+
+    @Column(nullable = false, precision = 10, scale = 7)
+    BigDecimal latitude;   // vĩ độ
+
+    @Column(nullable = false, precision = 10, scale = 7)
+    BigDecimal longitude;  // kinh độ
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     Order order;
