@@ -2,6 +2,7 @@ package com.hung.service;
 
 import com.hung.dto.request.RoleRequest;
 import com.hung.dto.response.RoleResponse;
+import com.hung.entity.Permission;
 import com.hung.mapper.RoleMapper;
 import com.hung.repository.PermissionRepository;
 import com.hung.repository.RoleRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +30,7 @@ public class RoleService {
         var role = roleMapper.toRole(request);
 
         var permissions = permissionRepository.findAllById(request.getPermissions());
-        role.setPermissions(new ArrayList<>(permissions));
+        role.setPermissions((Set<Permission>) permissions);
 
         role = roleRepository.save(role);
         return roleMapper.toRoleResponse(role);

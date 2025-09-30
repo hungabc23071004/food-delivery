@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,5 +27,5 @@ public class Role {
 
     @Builder.Default
     @ManyToMany
-    List<Permission> permissions= new ArrayList<>();;
+    Set<Permission> permissions= new HashSet<>();;
 }

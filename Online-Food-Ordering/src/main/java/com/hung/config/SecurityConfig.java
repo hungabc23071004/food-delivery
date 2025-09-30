@@ -27,6 +27,9 @@ public class SecurityConfig {
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.sessionManagement(management-> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -46,7 +49,16 @@ public class SecurityConfig {
                             config.setAllowCredentials(true); // nếu origin là * thì xóa dòng này
                             return config;
                         })
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .redirectionEndpoint(redir -> redir
+                                .baseUri("/auth/oauth2/callback/*")  // 👈 báo cho Spring biết
+                        )
+                        .successHandler(oAuth2LoginSuccessHandler)   // 👈 đăng ký handler custom ở đây
+                        .failureUrl("/login?error=true")
                 );
+
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))
