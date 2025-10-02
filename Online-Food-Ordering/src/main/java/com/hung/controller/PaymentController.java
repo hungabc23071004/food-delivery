@@ -21,6 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class PaymentController {
     PaymentService paymentService;
+
+    @GetMapping("/vn-pay/test")
+    public ApiResponse<VnpayResponse> pay(HttpServletRequest request) {
+        return ApiResponse.<VnpayResponse>builder()
+                .result(paymentService.createVnPayPaymentTest(request))
+                .build();
+    }
+
     @GetMapping("/vn-pay")
     public ApiResponse<VnpayResponse> pay(@RequestParam String  orderId,
             HttpServletRequest request) {

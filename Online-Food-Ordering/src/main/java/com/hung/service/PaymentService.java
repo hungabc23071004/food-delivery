@@ -50,4 +50,27 @@ public class PaymentService {
                 .message("success")
                 .paymentUrl(paymentUrl).build();
     }
+
+    public VnpayResponse createVnPayPaymentTest( HttpServletRequest request) {
+
+        Long amount = Long.parseLong(request.getParameter("total"))*100L;
+
+        String bankCode = request.getParameter("bankCode");
+        Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+
+        vnpParamsMap.put("vnp_IpAddr", VnpayUtil.getIpAddress(request));
+        //build query url
+
+
+        String queryUrl = VnpayUtil.getPaymentURL(vnpParamsMap, true);
+        String hashData = VnpayUtil.getPaymentURL(vnpParamsMap, false);
+        String vnpSecureHash = VnpayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
+        queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
+        String paymentUrl = vnPayConfig.getVnp_Payurl() + "?" + queryUrl;
+        return  VnpayResponse.builder()
+                .code("ok")
+                .message("success")
+                .paymentUrl(paymentUrl).build();
+    }
 }

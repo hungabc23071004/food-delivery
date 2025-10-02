@@ -16,10 +16,10 @@ import java.util.TimeZone;
     public class VnpayConfig {
         @Getter
         private String vnp_Payurl="https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        private  String vnp_ReturnUrl="http://localhost:8080/demo/payment/vn-pay-callback";
-        private  String vnp_TmnCode="1QEFV4BV";
+        private  String vnp_ReturnUrl="http://localhost:8080/food/payment/vn-pay-callback";
+        private  String vnp_TmnCode="J29SJO2W";
         @Getter
-        public  String secretKey="553YQDA5ZRH4OWZ312954JAKQB3MIPCE";
+        public  String secretKey="8NX0ZBUMFUNX3UBZ4S4NB2UKGIBC0RY3";
         public  String vnp_Version="2.1.0";
         public  String  vnp_Command="pay";
         public  String orderType="other";
@@ -31,7 +31,7 @@ import java.util.TimeZone;
             vnpParamsMap.put("vnp_TmnCode", vnp_TmnCode);
             vnpParamsMap.put("vnp_CurrCode", "VND");
             vnpParamsMap.put("vnp_TxnRef", VnpayUtil.getRandomNumber(8));
-            vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" +  VnpayUtil.getRandomNumber(8));
+            vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang " +  VnpayUtil.getRandomNumber(8));
             vnpParamsMap.put("vnp_OrderType", orderType);
             vnpParamsMap.put("vnp_Locale", "vn");
             vnpParamsMap.put("vnp_ReturnUrl", vnp_ReturnUrl);
