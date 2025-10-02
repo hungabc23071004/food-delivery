@@ -77,11 +77,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                     return userRepository.save(newUser);
                 });
 
-        // ✅ Sinh JWT
         User loginUser = userRepository.findByProviderAndProviderId(provider,finalProviderId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
         String token = authenticationService.generateToken(loginUser);
 
-        // ✅ Trả JSON về FE
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
