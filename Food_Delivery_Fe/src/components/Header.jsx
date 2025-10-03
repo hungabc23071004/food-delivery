@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../api/Authentication";
 import {
   MapPin,
-  ShoppingCart,
   User,
   Search,
   Calendar,
@@ -11,6 +10,7 @@ import {
   UserCircle,
   Power,
   ChevronDown,
+  Store,
 } from "lucide-react";
 
 const Header = () => {
@@ -101,7 +101,8 @@ const Header = () => {
 
           {/* Cart */}
           <div className="relative cursor-pointer">
-            <ShoppingCart size={24} className="text-orange-500" />
+            {/* Thay ShoppingCart bằng Store */}
+            <Store size={24} className="text-orange-500" />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full px-1.5 border border-white">
                 {cartCount}

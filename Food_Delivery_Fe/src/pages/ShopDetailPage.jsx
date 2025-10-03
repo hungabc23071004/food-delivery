@@ -10,6 +10,7 @@ import Footer from "../components/Footer";
 import FoodMenu from "../components/FoodMenu";
 import ProductCard from "../components/ProductCard";
 import { FaSearch } from "react-icons/fa";
+import CartBar from "../components/CartBar";
 
 const ShopDetailPage = () => {
   const { id } = useParams();
@@ -179,6 +180,7 @@ const ShopDetailPage = () => {
           </div>
         </div>
       </div>
+      <CartBar />
       <Footer />
     </>
   );

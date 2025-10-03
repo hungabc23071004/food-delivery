@@ -16,8 +16,7 @@ import {
   updateUserAddress,
 } from "../api/User_Address";
 // Thêm import dữ liệu địa phương từ file JSON
-import vietnamData from "../../public/vietnam-admin-2025.json";
-
+import vietnamData from "../data/vietnam-admin-2025.json";
 const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
   const [showModal, setShowModal] = useState(false);
   const [addresses, setAddresses] = useState([]);
