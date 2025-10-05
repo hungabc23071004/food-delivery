@@ -14,7 +14,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartItem {
     @Id
