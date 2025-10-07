@@ -29,20 +29,22 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
           )}
         </div>
       </div>
-      {/* Số lượng và nút tăng giảm */}
-      <div className="flex flex-col items-center gap-2">
+      {/* Số lượng và nút tăng giảm ngang - nhỏ hơn */}
+      <div className="flex items-center gap-0 bg-white rounded-lg border border-orange-200 px-0.5 py-0.5">
         <button
-          className="w-7 h-7 rounded bg-orange-100 text-orange-600 font-bold text-lg flex items-center justify-center hover:bg-orange-200"
-          onClick={onIncrease}
-        >
-          +
-        </button>
-        <span className="font-semibold text-base">{item.quantity}</span>
-        <button
-          className="w-7 h-7 rounded bg-orange-100 text-orange-600 font-bold text-lg flex items-center justify-center hover:bg-orange-200"
+          className="w-6 h-6 rounded-l bg-orange-50 text-orange-500 font-bold text-base flex items-center justify-center hover:bg-orange-100 focus:outline-none"
           onClick={onDecrease}
         >
           -
+        </button>
+        <span className="w-6 text-center font-semibold text-sm select-none">
+          {item.quantity}
+        </span>
+        <button
+          className="w-6 h-6 rounded-r bg-orange-50 text-orange-500 font-bold text-base flex items-center justify-center hover:bg-orange-100 focus:outline-none"
+          onClick={onIncrease}
+        >
+          +
         </button>
       </div>
     </div>

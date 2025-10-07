@@ -1,51 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import CartItem from "./CartItem";
 
-const fakeCart = [
-  {
-    id: 1,
-    name: "Cơm Trộn Xúc Xích",
-    image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=80&q=80",
-    option: "Xúc Xích Thêm 70gr",
-    note: "",
-    price: 68500,
-    originalPrice: 100000,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "Cơm Trộn Gà",
-    image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=80&q=80",
-    option: "",
-    note: "",
-    price: 40000,
-    originalPrice: 80000,
-    quantity: 1,
-  },
-  {
-    id: 3,
-    name: "Cơm Trộn Thịt Bò",
-    image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=80&q=80",
-    option: "Thịt Bò Thêm (70gr)",
-    note: "",
-    price: 74000,
-    originalPrice: 110000,
-    quantity: 1,
-  },
-];
-
-const CartBar = () => {
+const CartBar = ({ cartData }) => {
   const [showModal, setShowModal] = useState(false);
-  const cartItems = fakeCart; // sau này thay bằng state thực tế
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const [cart, setCart] = useState({
+    id: null,
+    quantity: 0,
+    totalPrice: 0,
+    cartItems: [],
+    ...cartData,
+  });
+
+  useEffect(() => {
+    setCart({
+      id: null,
+      quantity: 0,
+      totalPrice: 0,
+      cartItems: [],
+      ...cartData,
+    });
+  }, [cartData]);
+
+  const cartItems = cart.cartItems || [];
+  const cartCount = cart.quantity || 0;
+  const total = cart.totalPrice || 0;
   const originalTotal = cartItems.reduce(
     (sum, item) => sum + (item.originalPrice || item.price) * item.quantity,
     0
@@ -61,13 +40,15 @@ const CartBar = () => {
   return (
     <>
       <div className="fixed bottom-0 left-0 w-full bg-white shadow border-t-2 border-orange-300 z-50 flex items-center justify-between px-4 md:px-8 py-2 animate-slide-up">
-        <div className="font-bold text-orange-600 text-base flex items-center gap-2 relative">
-          <FaShoppingCart size={24} />
-          <span>Giỏ hàng của bạn</span>
-          {/* Badge số lượng */}
-          <span className="absolute -top-2 left-5 bg-orange-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5 shadow">
-            {cartCount}
+        <div className="font-bold text-orange-600 text-base flex items-center gap-4 relative">
+          <span className="relative mr-2">
+            <FaShoppingCart size={28} />
+            {/* Badge số lượng */}
+            <span className="absolute -top-3 left-5 bg-orange-500 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow border-2 border-white">
+              {cartCount}
+            </span>
           </span>
+          <span>Giỏ hàng của bạn</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-orange-600 font-bold text-base">
@@ -128,7 +109,18 @@ const CartBar = () => {
                 cartItems.map((item, idx) => (
                   <CartItem
                     key={item.id || idx}
-                    item={item}
+                    item={{
+                      id: item.id,
+                      name: item.foodName,
+                      image: item.imageUrl
+                        ? `http://localhost:8080/food/uploads/images/${item.imageUrl}`
+                        : undefined,
+                      price: item.price,
+                      quantity: item.quantity,
+                      option: item.options
+                        ?.map((opt) => opt.optionName)
+                        .join(", "),
+                    }}
                     onIncrease={() => handleIncrease(item)}
                     onDecrease={() => handleDecrease(item)}
                     onRemove={() => handleRemove(item)}
@@ -140,18 +132,20 @@ const CartBar = () => {
             <div className="px-6 py-4 border-t bg-white sticky bottom-0 z-10">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-400 line-through text-base">
-                  {originalTotal.toLocaleString()}đ
+                  {originalTotal > total
+                    ? originalTotal.toLocaleString() + "đ"
+                    : ""}
                 </span>
                 <span className="text-orange-600 font-extrabold text-xl drop-shadow">
                   {total.toLocaleString()}đ
                 </span>
               </div>
               <button
-                className="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white py-2 rounded-xl font-bold text-lg shadow-lg hover:scale-[1.02] hover:from-orange-500 hover:to-orange-600 transition-all duration-200 flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white py-1.5 rounded-lg font-bold text-base shadow hover:scale-[1.01] hover:from-orange-500 hover:to-orange-600 transition-all duration-200 flex items-center justify-center gap-2 mt-1"
                 onClick={handleCheckout}
                 disabled={cartItems.length === 0}
               >
-                <FaShoppingCart size={18} /> Giao hàng
+                <FaShoppingCart size={16} /> Giao hàng
               </button>
             </div>
             <div className="text-xs text-gray-400 text-center py-2">

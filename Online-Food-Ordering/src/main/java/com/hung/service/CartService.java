@@ -170,4 +170,12 @@ public class CartService {
         response.setCartItems(cartItemMapper.toCartItemResponseList(cart.getCartItems()));
         return response;
     }
+
+    public CartResponse getCart() {
+        User user = getCurrentUser();
+        Cart cart = cartRepository.findByUserIdAndStatus(user.getId(), CartStatus.ACTIVE);
+        CartResponse response = cartMapper.toResponse(cart);
+        response.setCartItems(cartItemMapper.toCartItemResponseList(cart.getCartItems()));
+        return response;
+    }
 }

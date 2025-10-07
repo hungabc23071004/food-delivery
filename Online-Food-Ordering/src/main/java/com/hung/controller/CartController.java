@@ -36,4 +36,10 @@ public class CartController {
                     .result(cartService.updateCartItem(id, cartItemRequest))
                     .build();
         }
+        @GetMapping()
+        public ApiResponse<CartResponse> getCartItems() {
+            return ApiResponse.<CartResponse>builder()
+                    .result(cartService.getCart())
+                    .build();
+        }
 }
