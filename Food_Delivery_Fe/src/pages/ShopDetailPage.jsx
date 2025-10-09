@@ -197,7 +197,11 @@ const ShopDetailPage = () => {
         </div>
       </div>
 
-      <CartBar cartData={cartData} />
+      {cartData &&
+        Array.isArray(cartData.cartItems) &&
+        cartData.cartItems.length > 0 && (
+          <CartBar cartData={cartData} onCartChange={setCartData} />
+        )}
       <Footer />
 
       {isModalOpen && selectedProduct && (

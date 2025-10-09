@@ -75,6 +75,10 @@ public class CartService {
 
         cartItem.setQuantity(request.getQuantity());
 
+        if(cartItem.getQuantity()==0){
+            cart.getCartItems().remove(cartItem);
+        }
+
         recalculateCart(cart);
 
         Cart savedCart = cartRepository.save(cart);

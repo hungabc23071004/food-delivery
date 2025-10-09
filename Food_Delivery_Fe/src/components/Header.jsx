@@ -12,6 +12,7 @@ import {
   ChevronDown,
   Store,
 } from "lucide-react";
+import { GiFoodTruck } from "react-icons/gi";
 
 const Header = () => {
   const [mode, setMode] = useState("Giao hàng");
@@ -96,18 +97,27 @@ const Header = () => {
 
         {/* Action icons */}
         <div className="flex items-center gap-6 ml-8">
-          {/* Clock */}
-          <span className="text-orange-500">🕒</span>
+          {/* GiFoodTruck icon cho đơn hàng có tooltip */}
+          <div className="relative group cursor-pointer">
+            <span className="text-orange-500">
+              <GiFoodTruck size={30} />
+            </span>
+            <span className="absolute left-1/2 -translate-x-1/2 mt-2 px-2 py-1 rounded bg-black text-white text-xs opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-all duration-150">
+              Xem đơn hàng
+            </span>
+          </div>
 
-          {/* Cart */}
-          <div className="relative cursor-pointer">
+          <div className="relative group cursor-pointer">
             {/* Thay ShoppingCart bằng Store */}
-            <Store size={24} className="text-orange-500" />
+            <Store size={22} className="text-orange-500" />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full px-1.5 border border-white">
                 {cartCount}
               </span>
             )}
+            <span className="absolute left-1/2 -translate-x-1/2 mt-2 px-2 py-1 rounded bg-black text-white text-xs opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-all duration-150">
+              Xem cửa hàng của bạn
+            </span>
           </div>
 
           {/* User */}

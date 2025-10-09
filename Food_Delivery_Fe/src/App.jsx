@@ -22,7 +22,6 @@ function App() {
         <Route path="/account/profile" element={<UserAccountPage />} />
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/shop/:id" element={<ShopDetailPage />} />
-        <Route path="/card" element={<CartBar />} />
       </Routes>
     </>
   );

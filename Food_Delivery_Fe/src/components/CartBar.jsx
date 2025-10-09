@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import CartItem from "./CartItem";
+import { updateCartItem, getCart, clearCartItem } from "../api/Cart";
 
-const CartBar = ({ cartData }) => {
+const CartBar = ({ cartData, onCartChange }) => {
   const [showModal, setShowModal] = useState(false);
   const [cart, setCart] = useState({
     id: null,
@@ -30,11 +31,39 @@ const CartBar = ({ cartData }) => {
     0
   );
 
-  // Các hàm xử lý (demo)
-  const handleIncrease = () => {};
-  const handleDecrease = () => {};
+  // Các hàm xử lý
+  const handleIncrease = async (item) => {
+    try {
+      await updateCartItem(item.id, { ...item, quantity: item.quantity + 1 });
+      const res = await getCart();
+      if (onCartChange) onCartChange(res.data.result || null);
+    } catch (err) {
+      // eslint-disable-next-line
+      console.error("Lỗi tăng số lượng:", err);
+    }
+  };
+  const handleDecrease = async (item) => {
+    try {
+      await updateCartItem(item.id, { ...item, quantity: item.quantity - 1 });
+      const res = await getCart();
+      if (onCartChange) onCartChange(res.data.result || null);
+    } catch (err) {
+      // eslint-disable-next-line
+      console.error("Lỗi giảm số lượng:", err);
+    }
+  };
   const handleRemove = () => {};
-  const handleClear = () => {};
+  const handleClear = async () => {
+    try {
+      if (!cart.id) return;
+      await clearCartItem(cart.id);
+      const res = await getCart();
+      if (onCartChange) onCartChange(res.data.result || null);
+    } catch (err) {
+      console.error("Lỗi xóa tất cả giỏ hàng:", err);
+      if (onCartChange) onCartChange(null);
+    }
+  };
   const handleCheckout = () => alert("Đặt hàng!");
 
   return (
