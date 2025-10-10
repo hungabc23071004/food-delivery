@@ -1,9 +1,9 @@
 package com.hung.dto.response;
 
+import com.hung.entity.OrderItermOption;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,12 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderResponse {
+public class OrderItemResponse {
     String id;
-    BigDecimal total;
-    BigDecimal shippingFee;
-    Double  subtotal;
-    String status;
-    String payment;
-    List<OrderItemResponse> orderItems= new ArrayList<>();
+    Integer quantity;
+    Double price;
+    String foodName;
+    String imageUrl;
+    List<OrderItermOptionResponse> options = new ArrayList<>();
 }

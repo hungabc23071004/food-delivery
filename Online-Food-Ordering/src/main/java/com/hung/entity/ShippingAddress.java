@@ -24,7 +24,7 @@ public class ShippingAddress {
     String ward;
     String district;
     String province;
-
+    String note;
     @Column(nullable = false, precision = 10, scale = 7)
     BigDecimal latitude;   // vĩ độ
 

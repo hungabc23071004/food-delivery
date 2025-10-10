@@ -20,9 +20,6 @@ public class OrderItem {
     Integer quantity;
     Double price;
 
-
-
-
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     Order order;
