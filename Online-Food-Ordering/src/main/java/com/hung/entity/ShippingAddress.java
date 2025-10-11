@@ -30,7 +30,7 @@ public class ShippingAddress {
 
     @Column(nullable = false, precision = 10, scale = 7)
     BigDecimal longitude;  // kinh độ
-    @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+
+    @OneToOne(mappedBy = "shippingAddress")
     Order order;
 }

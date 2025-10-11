@@ -1,19 +1,16 @@
-package com.hung.dto.request;
+package com.hung.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderRequest {
-    String userAddressId;
-    String cartId;
-    String payment;
-    Double shippingFee;
+public class ShippingFeeResponse {
+    Double baseFee;
+    Double distanceKm;
     Double discount;
+    Double finalFee;
 }

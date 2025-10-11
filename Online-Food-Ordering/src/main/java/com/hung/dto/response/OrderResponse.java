@@ -19,5 +19,6 @@ public class OrderResponse {
     Double  subtotal;
     String status;
     String payment;
+    BigDecimal totalDiscount;
     List<OrderItemResponse> orderItems= new ArrayList<>();
 }

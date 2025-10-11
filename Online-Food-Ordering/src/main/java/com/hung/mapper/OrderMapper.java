@@ -14,17 +14,21 @@ import java.util.List;
 
 public interface OrderMapper {
 
+    @Mapping(target = "id", ignore = true)
     ShippingAddress toShippingAddress(UserAddress userAddress);
 
+    @Mapping(target = "id",ignore = true)
     OrderItermOption toOrderItem(FoodOption foodOption);
 
     List<OrderItermOption> toOrderItemOptionList( List<FoodOption> foodOptionList);
 
+    @Mapping(target = "id", ignore = true)
     OrderItem toOrderItem(CartItem cartItem);
 
     List<OrderItem> toOrderItemList(List<CartItem> cartItemList);
 
     @Mapping(target="status", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Order toOrder ( Cart cart);
 
     OrderResponse toOrderResponse(Order order);
