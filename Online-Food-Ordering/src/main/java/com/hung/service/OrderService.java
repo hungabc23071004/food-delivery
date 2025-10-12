@@ -32,6 +32,7 @@ public class OrderService {
     OrderRepository orderRepository;
     UserAddressRepository userAddressRepository;
     UserRepository userRepository;
+    NotificationService notificationService;
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
         Cart cart = cartRepository.findById(orderRequest.getCartId()).orElseThrow(()-> new AppException(ErrorCode.CART_NOT_EXISTED));
@@ -62,6 +63,12 @@ public class OrderService {
         cart.setStatus(CartStatus.CLEARED);
         cartRepository.save(cart);
         OrderResponse orderResponse = orderMapper.toOrderResponse(order);
+        notificationService.sendNotification(
+                cart.getShop().getId(),
+                "SHOP",
+                "Có đơn hàng mới",
+                "Bạn có một đơn hàng mới từ " + order.getUser().getUsername()
+        );
         return orderResponse;
 
     }

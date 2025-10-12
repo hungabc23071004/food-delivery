@@ -30,7 +30,6 @@ import java.util.TimeZone;
             vnpParamsMap.put("vnp_Command", vnp_Command);
             vnpParamsMap.put("vnp_TmnCode", vnp_TmnCode);
             vnpParamsMap.put("vnp_CurrCode", "VND");
-            vnpParamsMap.put("vnp_TxnRef", VnpayUtil.getRandomNumber(8));
             vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang " +  VnpayUtil.getRandomNumber(8));
             vnpParamsMap.put("vnp_OrderType", orderType);
             vnpParamsMap.put("vnp_Locale", "vn");

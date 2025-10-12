@@ -33,7 +33,10 @@ public enum ErrorCode {
     CART_NOT_EXISTED(1025,"Cart does not exist", HttpStatus.NOT_FOUND),
     ORDER_NOT_FOUND(1026,"Order does not exist", HttpStatus.NOT_FOUND),
     INVALID_ORDER_STATUS(1027,"Invalid order status" ,HttpStatus.BAD_REQUEST ),
-    CANNOT_CANCEL_ORDER(1028,"Can't cancel order" , HttpStatus.BAD_REQUEST ),;
+    CANNOT_CANCEL_ORDER(1028,"Can't cancel order" , HttpStatus.BAD_REQUEST ),
+    INVALID_SIGNATURE(1029,"Invalid signature" ,HttpStatus.BAD_REQUEST ),
+    PAYMENT_ERROR(1030,"Payment error" ,HttpStatus.BAD_REQUEST ),;
+
     private Integer code;
     private String message;
     private HttpStatus httpStatus;
