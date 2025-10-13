@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import CartItem from "./CartItem";
 import { updateCartItem, getCart, clearCartItem } from "../api/Cart";
+import CheckoutModal from "./CheckoutModal";
 
 const CartBar = ({ cartData, onCartChange }) => {
   const [showModal, setShowModal] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [cart, setCart] = useState({
     id: null,
     quantity: 0,
@@ -64,7 +66,16 @@ const CartBar = ({ cartData, onCartChange }) => {
       if (onCartChange) onCartChange(null);
     }
   };
-  const handleCheckout = () => alert("Đặt hàng!");
+  const handleCheckout = () => setShowCheckout(true);
+
+  // Xử lý đặt hàng mẫu
+  const handleOrder = async (orderInfo) => {
+    // TODO: Gọi API tạo order ở đây
+    alert("Đặt hàng thành công!\n" + JSON.stringify(orderInfo));
+    setShowCheckout(false);
+    setShowModal(false);
+    // Sau khi đặt hàng thành công, có thể clear cart hoặc reload cart
+  };
 
   return (
     <>
@@ -183,6 +194,14 @@ const CartBar = ({ cartData, onCartChange }) => {
             </div>
           </div>
         </div>
+      )}
+      {/* Modal xác nhận đặt hàng */}
+      {showCheckout && (
+        <CheckoutModal
+          cart={cart}
+          onClose={() => setShowCheckout(false)}
+          onOrder={handleOrder}
+        />
       )}
     </>
   );

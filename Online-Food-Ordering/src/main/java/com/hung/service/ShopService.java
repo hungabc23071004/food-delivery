@@ -132,4 +132,9 @@ public class ShopService {
     }
 
 
+    public ShopResponse getMyShop() {
+        User user = userRepository.findByUsernameAndActive(SecurityContextHolder.getContext().getAuthentication().getName(),true).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Shop shop = user.getShop();
+        return shopMapper.toShopResponse(shop);
+    }
 }

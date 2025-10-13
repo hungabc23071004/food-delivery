@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { GiFoodTruck } from "react-icons/gi";
 
+// Importing useNavigate for routing
 const Header = () => {
   const [mode, setMode] = useState("Giao hàng");
   const cartCount = 2;
@@ -109,7 +110,11 @@ const Header = () => {
 
           <div className="relative group cursor-pointer">
             {/* Thay ShoppingCart bằng Store */}
-            <Store size={22} className="text-orange-500" />
+            <Store
+              size={22}
+              className="text-orange-500 cursor-pointer"
+              onClick={() => navigate("/shop-admin")}
+            />
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs rounded-full px-1.5 border border-white">
                 {cartCount}

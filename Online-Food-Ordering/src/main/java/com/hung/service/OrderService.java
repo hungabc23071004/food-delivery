@@ -63,12 +63,12 @@ public class OrderService {
         cart.setStatus(CartStatus.CLEARED);
         cartRepository.save(cart);
         OrderResponse orderResponse = orderMapper.toOrderResponse(order);
-        notificationService.sendNotification(
-                cart.getShop().getId(),
-                "SHOP",
-                "Có đơn hàng mới",
-                "Bạn có một đơn hàng mới từ " + order.getUser().getUsername()
-        );
+//        notificationService.sendNotification(
+//                cart.getShop().getId(),
+//                "SHOP",
+//                "Có đơn hàng mới",
+//                "Bạn có một đơn hàng mới từ " + order.getUser().getUsername()
+//        );
         return orderResponse;
 
     }

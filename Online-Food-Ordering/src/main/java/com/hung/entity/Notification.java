@@ -27,7 +27,7 @@ public class Notification {
     String receiverId; // ID của user/shop/shipper
     String type;       // "USER", "SHOP", "SHIPPER"
 
-    Boolean read = false;
+    Boolean readed = false;
 
     @CreationTimestamp
     LocalDateTime createdAt;

@@ -82,5 +82,12 @@ public class ShopController {
                 .build();
     }
 
+    @GetMapping ("/my_shop")
+    ApiResponse<ShopResponse> getMyShop () {
+        return ApiResponse.<ShopResponse>builder()
+                .result(shopService.getMyShop())
+                .build();
+    }
+
 
 }

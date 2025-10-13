@@ -7,3 +7,6 @@ export const SHOP_API = `${BASE_URL}/shop`;
 export const CATEGORY_OF_SHOP_API = `${BASE_URL}/category`;
 export const FOOD_API = `${BASE_URL}/food`;
 export const CART_API = `${BASE_URL}/cart`;
+export const ORDER_API = `${BASE_URL}/order`;
+export const SHIP_API = `${BASE_URL}/ship`;
+export const PAYMENT_API = `${BASE_URL}/payment`;

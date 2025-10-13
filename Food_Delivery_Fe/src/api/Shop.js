@@ -18,6 +18,13 @@ export const getShopById = async (id) => {
   return res.data;
 };
 
+export const getMyShop = async () => {
+  const res = await axios.get(`${SHOP_API}/my_shop`, {
+    headers: getAuthHeader(),
+  });
+  return res.data;
+};
+
 // Lay danh sach category cua shop
 export const getAllShopCategory = async () => {
   const res = await axios.get(`${SHOP_API}/category`, {

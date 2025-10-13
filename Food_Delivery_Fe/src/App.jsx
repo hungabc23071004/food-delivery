@@ -9,6 +9,7 @@ import UserAccountPage from "./pages/UserAccountPage";
 import CategoryPage from "./pages/CategoryPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
 import CartBar from "./components/CartBar";
+import AdminShopDashboard from "./components/AdminShop/AdminShopDashboard";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/account/profile" element={<UserAccountPage />} />
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/shop/:id" element={<ShopDetailPage />} />
+        <Route path="shop-admin" element={<AdminShopDashboard />} />
       </Routes>
     </>
   );
