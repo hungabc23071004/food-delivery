@@ -14,8 +14,7 @@ public class FoodResponse {
     private Double price;
     private Boolean available;
     private LocalDateTime createdAt;
-
-
+    private String category;
     private List<FoodOptionGroupResponse> optionGroups = new ArrayList<>();
     private List<String> images  = new ArrayList<>();
 }

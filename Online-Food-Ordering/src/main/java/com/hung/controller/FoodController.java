@@ -8,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +43,17 @@ public class FoodController {
     public ApiResponse<List<FoodResponse>> getFoodByCategoryId(@PathVariable String id) {
         return ApiResponse.<List<FoodResponse>>builder()
                 .result(foodService.getFoodByCategoryId(id))
+                .build();
+    }
+
+
+    @GetMapping("/shop/{id}")
+    public ApiResponse<Page<FoodResponse>> getFoodByShopId(@PathVariable String id,
+                                                           @RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "2") int size) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        return ApiResponse.<Page<FoodResponse>>builder()
+                .result(foodService.getFoodByShopId(id, pageable))
                 .build();
     }
 

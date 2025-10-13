@@ -16,6 +16,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -121,4 +124,39 @@ public class FoodService {
         }
         return responseList;
     }
+
+    public Page<FoodResponse> getFoodByShopId(String shopId, Pageable pageable) {
+
+        Page<Food> foodPage = foodRepository.findByShop_Id(shopId, pageable);
+
+        List<FoodResponse> responseList = new ArrayList<>();
+
+        for (Food food : foodPage.getContent()) {
+            FoodResponse response = foodMapper.toFoodResponse(food);
+
+            // Mapping option groups
+            for (FoodOptionGroup group : food.getOptionGroup()) {
+                FoodOptionGroupResponse groupResponse = foodMapper.toFoodOptionGroupResponse(group);
+
+                // Mapping options
+                for (FoodOption option : group.getOptions()) {
+                    FoodOptionResponse optionResponse = foodMapper.toFoodOptionResponse(option);
+                    groupResponse.getOptions().add(optionResponse);
+                }
+
+                response.getOptionGroups().add(groupResponse);
+            }
+
+            // Mapping images
+            for (FoodImage image : food.getImages()) {
+                response.getImages().add(image.getImageUrl());
+            }
+
+            responseList.add(response);
+        }
+
+        // Trả về page đã map (custom Page)
+        return new PageImpl<>(responseList, pageable, foodPage.getTotalElements());
+    }
+
 }

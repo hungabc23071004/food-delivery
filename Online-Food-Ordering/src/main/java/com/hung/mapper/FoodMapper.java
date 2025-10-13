@@ -32,6 +32,9 @@ public interface FoodMapper {
     FoodOptionGroupResponse toFoodOptionGroupResponse(FoodOptionGroup foodOptionGroup);
 
     @Mapping(target = "images", ignore = true)
+
     @Mapping(target = "optionGroups",ignore = true)
+    @Mapping(source = "category.name", target = "category") // ✅ map shop.name → category
+
     FoodResponse toFoodResponse(Food food);
 }

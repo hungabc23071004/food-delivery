@@ -1,7 +1,11 @@
+import React, { useState, useEffect } from "react";
 import AdminSidebar from "./AdminSidebar";
-
 import AdminProductTable from "./AdminProductTable";
+import AdminCategoryTable from "./AdminCategoryTable";
+import AdminNotificationList from "./AdminNotificationList";
+import { getMyShop } from "../../api/Shop";
 
+// (Tuỳ chọn) dữ liệu giả cho phần Customers
 const mockData = [
   {
     id: 1,
@@ -55,21 +59,19 @@ const mockData = [
   },
 ];
 
-import React, { useState, useEffect } from "react";
-import { getMyShop } from "../../api/Shop";
-
 const AdminShopDashboard = () => {
   const [selectedMenu, setSelectedMenu] = useState("Dashboard");
   const [shop, setShop] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // 🧩 Lấy thông tin cửa hàng của người dùng hiện tại
   useEffect(() => {
     const fetchShop = async () => {
       setLoading(true);
       try {
         const res = await getMyShop();
-        setShop(res);
+        setShop(res?.result || null);
         setError("");
       } catch (err) {
         setShop(null);
@@ -81,13 +83,16 @@ const AdminShopDashboard = () => {
     fetchShop();
   }, []);
 
+  // ⏳ Hiển thị loading khi đang tải
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-500">
-        Đang tải...
+        Đang tải thông tin cửa hàng...
       </div>
     );
   }
+
+  // ❌ Hiển thị lỗi nếu chưa có shop
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen text-red-500 font-semibold">
@@ -96,22 +101,49 @@ const AdminShopDashboard = () => {
     );
   }
 
+  // ✅ Giao diện chính
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar quản trị */}
       <AdminSidebar selected={selectedMenu} onMenuSelect={setSelectedMenu} />
+
+      {/* Nội dung chính */}
       <main className="flex-1 p-8">
+        {/* Header */}
         <div className="mb-6">
           <h2 className="text-xl font-bold text-gray-800 mb-1">Pages</h2>
           <div className="text-sm text-gray-400">Home / {selectedMenu}</div>
         </div>
-        {selectedMenu === "Products" && <AdminProductTable />}
+
+        {/* Hiển thị từng trang tương ứng */}
+        {selectedMenu === "Dashboard" && (
+          <div className="bg-white rounded-lg shadow p-6 text-gray-500 text-center">
+            Chào mừng bạn đến với bảng điều khiển quản trị của shop{" "}
+            <span className="font-semibold text-gray-800">{shop?.name}</span>.
+          </div>
+        )}
+
+        {selectedMenu === "Products" && shop?.id ? (
+          <AdminProductTable shopId={shop.id} />
+        ) : null}
+        {selectedMenu === "Category" && shop?.id ? (
+          <AdminCategoryTable shopId={shop.id} />
+        ) : null}
+        {selectedMenu === "Notifications" && shop?.id ? (
+          <AdminNotificationList shopId={shop.id} />
+        ) : null}
+
         {selectedMenu === "Orders" && (
           <div className="bg-white rounded-lg shadow p-6 text-gray-400 text-center">
             Chưa có bảng đơn hàng hoặc thông báo.
           </div>
         )}
-        {selectedMenu === "Customers" && <AdminVendorTable data={mockData} />}
-        {/* Có thể thêm các component khác cho từng menu nếu muốn */}
+
+        {selectedMenu === "Customers" && (
+          <div className="bg-white rounded-lg shadow p-6 text-gray-400 text-center">
+            (Giả lập) Dữ liệu khách hàng sẽ hiển thị ở đây.
+          </div>
+        )}
       </main>
     </div>
   );
