@@ -17,13 +17,13 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public Notification sendNotification(String receiverId, String type, String title, String message) {
+    public void  sendNotification(String receiverId, String type, String title, String message) {
         Notification notification = Notification.builder()
-                .receiverId(receiverId)
                 .type(type)
                 .title(title)
                 .message(message)
                 .build();
+        notification.setReceiverId(receiverId);
 
         notificationRepository.save(notification);
 
@@ -31,7 +31,7 @@ public class NotificationService {
         messagingTemplate.convertAndSend("/topic/notifications/" + receiverId, notification);
         log.info("📢 Sent notification to {} [{}]: {}", receiverId, type, message);
 
-        return notification;
+
     }
 
     public List<Notification> getNotifications(String receiverId) {

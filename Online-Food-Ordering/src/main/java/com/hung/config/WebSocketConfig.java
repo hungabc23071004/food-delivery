@@ -11,7 +11,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Endpoint để FE kết nối WebSocket (vd: ws://localhost:8080/ws)
-        registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("*")  // ✅ Dùng cái này thay vì setAllowedOrigins
+                .withSockJS();
     }
 
     @Override

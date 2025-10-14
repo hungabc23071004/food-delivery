@@ -1,23 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa";
+import {
+  connectNotificationWS,
+  disconnectNotificationWS,
+} from "../../api/Notification";
 
-// Giả sử bạn có API này, nếu chưa có thì sẽ cần bổ sung ở backend và file api
-// import { getShopNotifications } from "../../api/Notification";
-
-const mockNotifications = [
-  {
-    id: 1,
-    message: "Bạn có đơn hàng mới!",
-    createdAt: "2025-10-14T09:00:00",
-    read: false,
-  },
-  {
-    id: 2,
-    message: "Khách hàng đã thanh toán đơn hàng #1234.",
-    createdAt: "2025-10-13T15:30:00",
-    read: true,
-  },
-];
+// ...existing code...
 
 const AdminNotificationList = ({ shopId }) => {
   // Khi có API thật, thay mockNotifications bằng state và gọi API
@@ -27,15 +15,14 @@ const AdminNotificationList = ({ shopId }) => {
 
   useEffect(() => {
     if (!shopId) return;
-    setLoading(true);
-    // getShopNotifications(shopId)
-    //   .then((res) => setNotifications(res.result || []))
-    //   .catch(() => setError("Không thể tải thông báo."))
-    //   .finally(() => setLoading(false));
-    setTimeout(() => {
-      setNotifications(mockNotifications);
-      setLoading(false);
-    }, 500);
+    // Kết nối WebSocket khi mount, nhận notification mới
+    connectNotificationWS(shopId, (notif) => {
+      setNotifications((prev) => [notif, ...prev]);
+    });
+    // TODO: Có thể fetch danh sách notification cũ qua REST API nếu cần
+    return () => {
+      disconnectNotificationWS();
+    };
   }, [shopId]);
 
   if (loading)
@@ -54,20 +41,24 @@ const AdminNotificationList = ({ shopId }) => {
         <ul className="divide-y">
           {notifications.map((n) => (
             <li
-              key={n.id}
+              key={n.id || n._id}
               className={`py-3 flex items-start gap-3 ${
-                n.read ? "bg-gray-50" : "bg-orange-50"
+                n.readed || n.read ? "bg-gray-50" : "bg-orange-50"
               }`}
             >
               <span className="flex-1">
                 <span className="block font-medium text-gray-800">
+                  {n.title || "Thông báo"}
+                  <br />
                   {n.message}
                 </span>
                 <span className="block text-xs text-gray-400 mt-1">
-                  {new Date(n.createdAt).toLocaleString("vi-VN")}
+                  {n.createdAt
+                    ? new Date(n.createdAt).toLocaleString("vi-VN")
+                    : ""}
                 </span>
               </span>
-              {!n.read && (
+              {!(n.readed || n.read) && (
                 <span className="text-xs text-orange-500 font-bold">Mới</span>
               )}
             </li>

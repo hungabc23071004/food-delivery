@@ -67,6 +67,8 @@ public class ShopService {
 
 
 
+
+
     public ShopResponse decorateShop(ShopDecorationRequest shopRequest) throws IOException {
 
         Path uploadDir = CURRENT_FOLDER.resolve("uploads").resolve("images");

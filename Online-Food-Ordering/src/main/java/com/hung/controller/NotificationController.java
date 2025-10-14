@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 
@@ -22,5 +22,14 @@ public class NotificationController {
     @PutMapping("/{id}/read")
     public void markAsRead(@PathVariable String id) {
         notificationService.markAsRead(id);
+    }
+
+    // Endpoint test gửi notification thủ công
+    @PostMapping("/test-send")
+    public void  testSendNotification(@RequestParam String receiverId,
+                                            @RequestParam(defaultValue = "SHOP") String type,
+                                            @RequestParam String title,
+                                            @RequestParam String message) {
+         notificationService.sendNotification(receiverId, type, title, message);
     }
 }
