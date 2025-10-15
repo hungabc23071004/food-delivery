@@ -102,36 +102,10 @@ const UserAddress = ({ onEdit, onDelete, onAdd, active }) => {
     setWards(district ? district.wards : []);
   };
 
-  // Chọn Phường/Xã và tự động lấy lat/lon từ Nominatim (chuẩn hóa query)
-  const handleWardChange = async (e) => {
+  // Chọn Phường/Xã
+  const handleWardChange = (e) => {
     const [code, name] = e.target.value.split("|");
-    const newForm = { ...form, ward: name, wardCode: code };
-    setForm(newForm);
-
-    // Nếu đã chọn đủ tỉnh, xã thì gọi API lấy lat/lon
-    if (newForm.city && name) {
-      // Ghép query: ward, city, Việt Nam và thay khoảng trắng bằng dấu +
-      const query = `${name}, ${newForm.city}, Việt Nam`.replace(/ /g, "+");
-      try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1`
-        );
-        const data = await res.json();
-        if (data && data.length > 0) {
-          setForm((prev) => ({
-            ...prev,
-            latitude: parseFloat(data[0].lat),
-            longitude: parseFloat(data[0].lon),
-          }));
-        }
-      } catch {
-        setForm((prev) => ({
-          ...prev,
-          latitude: 0,
-          longitude: 0,
-        }));
-      }
-    }
+    setForm((prev) => ({ ...prev, ward: name, wardCode: code }));
   };
 
   // Input khác

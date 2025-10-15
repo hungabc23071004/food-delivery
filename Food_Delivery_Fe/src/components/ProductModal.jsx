@@ -85,32 +85,28 @@ const ProductModal = ({ product, onClose, onCartChange }) => {
 
         {/* Số lượng */}
         <div className="flex justify-end mb-4">
-          <div className="flex items-center gap-0 bg-white rounded-lg border border-orange-400 px-1 py-1">
+          <div className="flex border border-orange-400 rounded-md overflow-hidden">
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="w-8 h-8 rounded-l-lg bg-orange-50 text-orange-500 font-bold text-lg flex items-center justify-center hover:bg-orange-100 focus:outline-none"
-              disabled={quantity <= 1}
-              tabIndex={-1}
+              className="px-3 text-orange-500"
             >
-              -
+              −
             </button>
             <input
               value={quantity}
               onChange={(e) => {
                 const val = e.target.value;
-                if (val === "") setQuantity(1);
+                if (val === "") setQuantity("");
                 else if (/^\d+$/.test(val)) setQuantity(Number(val));
               }}
               onBlur={() => {
                 if (!quantity || quantity < 1) setQuantity(1);
               }}
-              className="w-12 text-center border-none outline-none focus:ring-0 appearance-none hide-number-spin text-base font-semibold bg-transparent"
-              style={{ MozAppearance: "textfield" }}
+              className="w-10 text-center outline-none"
             />
             <button
               onClick={() => setQuantity((q) => q + 1)}
-              className="w-8 h-8 rounded-r-lg bg-orange-50 text-orange-500 font-bold text-lg flex items-center justify-center hover:bg-orange-100 focus:outline-none"
-              tabIndex={-1}
+              className="px-3 text-orange-500"
             >
               +
             </button>
