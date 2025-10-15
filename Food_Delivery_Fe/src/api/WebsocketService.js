@@ -4,32 +4,34 @@ import Stomp from "stompjs";
 
 let stompClient = null;
 const subscriptions = {};
-const pendingSubscribeQueue = []; // { topic, callback }
+const pendingSubscribeQueue = [];
 let isConnecting = false;
 let reconnectAttempts = 0;
 
-const MAX_RECONNECT_DELAY = 30000; // 30s
-const baseDelay = 2000;
+const MAX_RECONNECT_DELAY = 30000;
+const BASE_DELAY = 2000;
 
 const getTokenHeader = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
 const calcDelay = (attempt) =>
-  Math.min(MAX_RECONNECT_DELAY, baseDelay * Math.pow(1.5, attempt));
+  Math.min(MAX_RECONNECT_DELAY, BASE_DELAY * Math.pow(1.5, attempt));
 
 export const connectWebSocket = (onConnected) => {
-  if (stompClient && stompClient.connected) {
-    console.log("⚠️ WebSocket already connected");
-    if (onConnected) onConnected();
+  if (stompClient && (stompClient.connected || isConnecting)) {
+    console.log("⚠️ WebSocket already connecting or connected");
+    if (stompClient.connected && onConnected) onConnected();
     return;
   }
-  if (isConnecting) return;
+
+  console.log("🔌 Attempting WebSocket connection...");
   isConnecting = true;
 
   const socketUrl =
-    (process.env.REACT_APP_WS_URL || "http://localhost:8080") + "/food/ws";
+    (import.meta.env.VITE_WS_URL || "http://localhost:8080") + "/food/ws";
+
   const socket = new SockJS(socketUrl);
   stompClient = Stomp.over(socket);
   stompClient.debug = null;
@@ -42,11 +44,19 @@ export const connectWebSocket = (onConnected) => {
       console.log("✅ WebSocket connected");
       isConnecting = false;
       reconnectAttempts = 0;
-      // drain pending subscribe queue
+
+      // clear duplicates before replay
+      const uniqueQueue = [];
+      const seen = new Set();
       while (pendingSubscribeQueue.length) {
         const { topic, callback } = pendingSubscribeQueue.shift();
-        subscribe(topic, callback);
+        if (!seen.has(topic)) {
+          seen.add(topic);
+          uniqueQueue.push({ topic, callback });
+        }
       }
+
+      uniqueQueue.forEach(({ topic, callback }) => subscribe(topic, callback));
       if (onConnected) onConnected();
     },
     (err) => {
@@ -55,26 +65,31 @@ export const connectWebSocket = (onConnected) => {
       stompClient = null;
       reconnectAttempts += 1;
       const delay = calcDelay(reconnectAttempts);
-      console.log(`🔁 Reconnect in ${Math.round(delay / 1000)}s`);
+      console.log(`🔁 Reconnecting in ${Math.round(delay / 1000)}s...`);
       setTimeout(() => connectWebSocket(onConnected), delay);
     }
   );
 };
 
 export const disconnectWebSocket = () => {
-  if (!stompClient) return;
+  if (!stompClient) {
+    console.warn("⚠️ No WebSocket instance found");
+    return;
+  }
+
   try {
     Object.keys(subscriptions).forEach((t) => {
       subscriptions[t]?.unsubscribe?.();
       delete subscriptions[t];
     });
-    // ensure disconnect only once
-    try {
+
+    if (stompClient.connected) {
+      console.log("🔌 Disconnecting WebSocket...");
       stompClient.disconnect(() => {
         console.log("❌ WebSocket disconnected");
       });
-    } catch (e) {
-      console.warn("⚠️ stomp disconnect error", e);
+    } else {
+      console.warn("⚠️ Cannot disconnect — not connected yet");
     }
   } catch (err) {
     console.error("❌ Error while disconnecting:", err);
@@ -86,10 +101,11 @@ export const disconnectWebSocket = () => {
 };
 
 export const subscribe = (topic, callback) => {
-  // if not connected yet, push to pending queue
   if (!stompClient || !stompClient.connected) {
-    console.warn("⚠️ WebSocket not connected — queueing subscribe:", topic);
-    pendingSubscribeQueue.push({ topic, callback });
+    if (!pendingSubscribeQueue.some((x) => x.topic === topic)) {
+      console.warn("⚠️ WebSocket not ready — queueing subscribe:", topic);
+      pendingSubscribeQueue.push({ topic, callback });
+    }
     return;
   }
 
@@ -98,14 +114,17 @@ export const subscribe = (topic, callback) => {
     return;
   }
 
+  console.log(`🛰️ Subscribing to topic: ${topic}`);
   const sub = stompClient.subscribe(topic, (msg) => {
     try {
       const body = JSON.parse(msg.body);
+      console.log(`📩 Message received on ${topic}:`, body);
       callback(body);
     } catch (e) {
       console.error("❌ Error parsing message:", e);
     }
   });
+
   subscriptions[topic] = sub;
   console.log(`📡 Subscribed: ${topic}`);
 };
@@ -114,15 +133,17 @@ export const unsubscribe = (topic) => {
   if (subscriptions[topic]) {
     try {
       subscriptions[topic].unsubscribe();
+      console.log(`🧹 Unsubscribed from: ${topic}`);
     } catch (e) {
       console.warn("⚠️ unsubscribe error", e);
     }
     delete subscriptions[topic];
-    console.log(`🧹 Unsubscribed from: ${topic}`);
   } else {
-    // nếu đang ở queue thì loại bỏ
     const idx = pendingSubscribeQueue.findIndex((x) => x.topic === topic);
-    if (idx >= 0) pendingSubscribeQueue.splice(idx, 1);
+    if (idx >= 0) {
+      pendingSubscribeQueue.splice(idx, 1);
+      console.log(`🧾 Removed pending subscription: ${topic}`);
+    }
   }
 };
 
@@ -132,6 +153,7 @@ export const sendMessage = (destination, body = {}, headers = {}) => {
     return;
   }
   try {
+    console.log(`🚀 Sending message to ${destination}:`, body);
     stompClient.send(destination, headers, JSON.stringify(body));
   } catch (e) {
     console.error("❌ sendMessage error:", e);

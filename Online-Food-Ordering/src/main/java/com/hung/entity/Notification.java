@@ -27,6 +27,7 @@ public class Notification {
     String receiverId; // ID của user/shop/shipper
     String type;       // "USER", "SHOP", "SHIPPER"
 
+    @Builder.Default
     Boolean readed = false;
 
     @CreationTimestamp

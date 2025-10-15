@@ -11,14 +11,14 @@ import CategoryPage from "./pages/CategoryPage";
 import ShopDetailPage from "./pages/ShopDetailPage";
 import LogoutModal from "./components/LogoutModal";
 import AdminShopDashboard from "./components/AdminShop/AdminShopDashboard";
-import { connectWebSocket, disconnectWebSocket } from "./api/websocketService";
+import { connectWebSocket, disconnectWebSocket } from "./api/WebsocketService";
 
 function App() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
 
     // ✅ Nếu có token thì kiểm tra hợp lệ
     if (token) {

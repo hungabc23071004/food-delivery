@@ -1,8 +1,16 @@
 package com.hung.controller;
 
+import com.hung.dto.request.NotificationRequest;
+import com.hung.dto.response.ApiResponse;
+import com.hung.dto.response.NotificationResponse;
 import com.hung.entity.Notification;
+import com.hung.mapper.NotificationMapper;
 import com.hung.service.NotificationService;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,13 +18,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/notifications")
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class NotificationController {
 
-    private final NotificationService notificationService;
+    NotificationService notificationService;
 
-    @GetMapping("/{receiverId}")
-    public List<Notification> getUserNotifications(@PathVariable String receiverId) {
-        return notificationService.getNotifications(receiverId);
+    @GetMapping("/shop")
+    public ApiResponse<List<NotificationResponse>> getShopNotifications(@RequestParam String receiverId) {
+        return ApiResponse.<List<NotificationResponse>>builder()
+                .result(notificationService.getShopNotifications(receiverId))
+                .build();
     }
 
     @PutMapping("/{id}/read")
@@ -26,10 +38,7 @@ public class NotificationController {
 
     // Endpoint test gửi notification thủ công
     @PostMapping("/test-send")
-    public void  testSendNotification(@RequestParam String receiverId,
-                                            @RequestParam(defaultValue = "SHOP") String type,
-                                            @RequestParam String title,
-                                            @RequestParam String message) {
-         notificationService.sendNotification(receiverId, type, title, message);
+    public void  testSendNotification(@RequestBody NotificationRequest request) {
+         notificationService.sendNotification(request);
     }
 }

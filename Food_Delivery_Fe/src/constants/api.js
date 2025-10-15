@@ -10,3 +10,4 @@ export const CART_API = `${BASE_URL}/cart`;
 export const ORDER_API = `${BASE_URL}/order`;
 export const SHIP_API = `${BASE_URL}/ship`;
 export const PAYMENT_API = `${BASE_URL}/payment`;
+export const NOTIFICATION_API = `${BASE_URL}/notifications`;
