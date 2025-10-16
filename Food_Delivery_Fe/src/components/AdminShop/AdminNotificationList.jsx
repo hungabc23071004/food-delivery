@@ -1,60 +1,91 @@
 import React, { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { subscribe, unsubscribe } from "../../api/WebsocketService";
-import { fetchNotifications } from "../../api/NotificationApi";
-import axios from "axios";
-
-// ...existing code...
+import { fetchNotifications, markAsRead } from "../../api/NotificationApi";
 
 const AdminNotificationList = ({ shopId }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-  const pageSize = 10;
+  const [page, setPage] = useState(1); // backend 1-based
+  const pageSize = 5;
   const [totalPages, setTotalPages] = useState(1);
+  const [hasNew, setHasNew] = useState(false);
 
+  // 📥 Hàm tải danh sách thông báo theo trang
+  const loadNotifications = async (pageNum = 1) => {
+    if (!shopId) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchNotifications(shopId, pageNum, pageSize);
+      // Lấy notifications từ result.content (BE đã phân trang)
+      const arr = Array.isArray(data?.result?.content)
+        ? data.result.content
+        : [];
+      setNotifications(arr);
+      // Lấy số trang từ BE (nếu có), luôn ưu tiên số trang từ BE
+      if (typeof data?.result?.totalPages === "number") {
+        setTotalPages(data.result.totalPages);
+      } else {
+        console.log("Không thể lấy số trang từ backend, sử dụng mặc định là 1");
+        setTotalPages(1);
+      }
+      setHasNew(false);
+    } catch {
+      setError("Không thể tải thông báo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔁 Gọi API mỗi khi shopId hoặc page thay đổi
+  useEffect(() => {
+    loadNotifications(page);
+  }, [shopId, page]);
+
+  // 🔔 Lắng nghe WebSocket thông báo mới
   useEffect(() => {
     if (!shopId) return;
-    setLoading(true);
-    setError(null);
-    fetchNotifications(shopId)
-      .then((data) => {
-        // Nếu API trả về result là mảng (không phải paginated)
-        const arr = Array.isArray(data?.result) ? data.result : [];
-        setNotifications(arr);
-        setTotalPages(Math.max(1, Math.ceil(arr.length / pageSize)));
-      })
-      .catch(() => setError("Không thể tải thông báo."))
-      .finally(() => setLoading(false));
-
-    // Lắng nghe notification mới qua WebSocket
     const topic = `/topic/notifications/${shopId}`;
     subscribe(topic, (notif) => {
-      setNotifications((prev) => [notif, ...prev]);
-    });
-    return () => {
-      unsubscribe(topic);
-    };
-  }, [shopId]);
+      setNotifications((prev) => {
+        // Nếu thông báo đã tồn tại → bỏ qua
+        if (prev.some((n) => n.id === notif.id)) return prev;
 
-  // Đánh dấu đã đọc notification
-  const markAsRead = async (id) => {
-    try {
-      await axios.put(
-        `/food/notifications/${id}/read`,
-        {},
-        {
-          headers: localStorage.getItem("accessToken")
-            ? { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }
-            : {},
+        if (page === 1) {
+          // Đang ở trang đầu → thêm thông báo mới vào đầu danh sách
+          const newList = [notif, ...prev];
+          return newList.slice(0, pageSize); // chỉ giữ tối đa 5 thông báo
+        } else {
+          // Nếu đang ở trang khác → hiển thị badge "Có thông báo mới"
+          setHasNew(true);
+          return prev;
         }
-      );
+      });
+    });
+    return () => unsubscribe(topic);
+  }, [shopId, page]);
+
+  // ⏱ Tự động đồng bộ mỗi 3 phút (chỉ khi đang ở trang 1)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (page === 1) {
+        loadNotifications(1);
+      }
+    }, 180000);
+    return () => clearInterval(interval);
+  }, [shopId, page]);
+
+  // ✅ Đánh dấu thông báo đã đọc
+  const handleMarkAsRead = async (id) => {
+    try {
+      await markAsRead(id);
       setNotifications((prev) =>
         prev.map((n) => (n.id === id ? { ...n, readed: true } : n))
       );
     } catch (e) {
-      // Có thể show toast lỗi nếu muốn
+      console.error("Lỗi đánh dấu đã đọc:", e);
     }
   };
 
@@ -62,57 +93,61 @@ const AdminNotificationList = ({ shopId }) => {
     return <div className="p-6 text-gray-400">Đang tải thông báo...</div>;
   if (error) return <div className="p-6 text-red-500">{error}</div>;
 
-  // Phân trang phía client
-  const pagedNotifications = notifications.slice(
-    page * pageSize,
-    (page + 1) * pageSize
-  );
-
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white rounded-lg shadow p-6 relative">
       <div className="flex items-center gap-2 mb-4">
         <FaBell className="text-orange-500" />
         <h2 className="text-lg font-semibold">Thông báo của shop</h2>
       </div>
-      {pagedNotifications.length === 0 ? (
+
+      {/* 🔔 Badge hiển thị khi có thông báo mới */}
+      {hasNew && (
+        <div
+          className="absolute top-4 right-6 bg-orange-500 text-white text-xs px-3 py-1 rounded-full shadow cursor-pointer"
+          onClick={() => {
+            setPage(1);
+            loadNotifications(1);
+          }}
+        >
+          Có thông báo mới
+        </div>
+      )}
+
+      {notifications.length === 0 ? (
         <div className="text-gray-400">Không có thông báo nào.</div>
       ) : (
         <>
           <ul className="flex flex-col gap-2">
-            {pagedNotifications.map((n) => (
+            {notifications.map((n) => (
               <li
                 key={n.id || n._id}
                 className={`flex items-start gap-3 rounded-lg shadow-sm transition-all border border-gray-100 px-4 py-3 relative group
                   ${
-                    n.readed === true
+                    n.readed
                       ? "bg-white"
                       : "bg-yellow-50 hover:bg-yellow-100 cursor-pointer"
                   }`}
-                onClick={() => {
-                  if (!n.readed) markAsRead(n.id);
-                }}
+                onClick={() => !n.readed && handleMarkAsRead(n.id)}
               >
-                <span className="mt-1">
-                  <FaBell
-                    className={
-                      n.readed === true
-                        ? "text-gray-300"
-                        : "text-orange-400 animate-bounce group-hover:animate-none"
-                    }
-                    size={20}
-                  />
-                </span>
+                <FaBell
+                  className={`mt-1 ${
+                    n.readed
+                      ? "text-gray-300"
+                      : "text-orange-400 animate-bounce group-hover:animate-none"
+                  }`}
+                  size={20}
+                />
                 <span className="flex-1 min-w-0">
                   <span
                     className={`block font-semibold text-base truncate ${
-                      n.readed === true ? "text-gray-500" : "text-gray-900"
+                      n.readed ? "text-gray-500" : "text-gray-900"
                     }`}
                   >
                     {n.title || "Thông báo"}
                   </span>
                   <span
                     className={`block text-sm mt-1 whitespace-pre-line ${
-                      n.readed === true ? "text-gray-400" : "text-gray-700"
+                      n.readed ? "text-gray-400" : "text-gray-700"
                     }`}
                   >
                     {n.message}
@@ -123,7 +158,7 @@ const AdminNotificationList = ({ shopId }) => {
                       : ""}
                   </span>
                 </span>
-                {n.readed !== true && (
+                {!n.readed && (
                   <span className="absolute top-2 right-4 text-xs font-bold text-white bg-orange-500 rounded-full px-2 py-0.5 shadow">
                     Mới
                   </span>
@@ -131,22 +166,22 @@ const AdminNotificationList = ({ shopId }) => {
               </li>
             ))}
           </ul>
-          {/* Pagination controls */}
+          {/* 📄 Pagination */}
           <div className="flex justify-center gap-2 mt-6">
             <button
               className="px-3 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-              disabled={page === 0}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
             >
               Trang trước
             </button>
             <span className="px-2 py-1 text-sm">
-              {page + 1} / {totalPages}
+              {page} / {totalPages}
             </span>
             <button
               className="px-3 py-1 rounded border bg-white hover:bg-gray-100 disabled:opacity-50"
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-              disabled={page >= totalPages - 1}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
             >
               Trang sau
             </button>

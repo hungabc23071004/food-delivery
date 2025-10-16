@@ -32,5 +32,9 @@ public class Notification {
 
     @CreationTimestamp
     LocalDateTime createdAt;
+
+    String redirectUrl;
+    boolean popup; // Có hiển thị popup ngay không
+
 }
 

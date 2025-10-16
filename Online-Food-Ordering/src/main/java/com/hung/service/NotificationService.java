@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +27,19 @@ public class NotificationService {
     NotificationMapper notificationMapper;
 
     public void  sendNotification(NotificationRequest request) {
+        for(String id: request.getReceiverId()){
         Notification notification = notificationMapper.toNotification(request);
+        notification.setReceiverId(id);
+        notification.setType("SHOP");
         notificationRepository.save(notification);
-
         // Gửi qua WebSocket đến client đang subscribe
-        messagingTemplate.convertAndSend("/topic/notifications/" + request.getReceiverId(), notification);
+        messagingTemplate.convertAndSend("/topic/notifications/" + request.getReceiverId(), notification);}
 
     }
 
-    public List<NotificationResponse> getShopNotifications(String receiverId) {
-        List<Notification> notificationList= notificationRepository.findByReceiverIdAndTypeOrderByCreatedAtDesc(receiverId, "SHOP");
-        return notificationMapper.toResponseList(notificationList);
+    public Page<NotificationResponse> getShopNotifications(String receiverId, Pageable pageable) {
+        Page<Notification> notificationList= notificationRepository.findByReceiverIdAndTypeOrderByCreatedAtDesc(receiverId, "SHOP",pageable);
+        return notificationList.map(notificationMapper:: toResponse);
     }
 
     public void markAsRead(String id) {

@@ -10,6 +10,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +28,14 @@ public class NotificationController {
     NotificationService notificationService;
 
     @GetMapping("/shop")
-    public ApiResponse<List<NotificationResponse>> getShopNotifications(@RequestParam String receiverId) {
-        return ApiResponse.<List<NotificationResponse>>builder()
-                .result(notificationService.getShopNotifications(receiverId))
+    public ApiResponse<Page<NotificationResponse>> getShopNotifications(@RequestParam String receiverId,
+                                                                        @RequestParam(defaultValue = "1") int page,
+                                                                        @RequestParam(defaultValue = "5") int size
+
+    ) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        return ApiResponse.<Page<NotificationResponse>>builder()
+                .result(notificationService.getShopNotifications(receiverId,pageable))
                 .build();
     }
 
@@ -37,7 +45,7 @@ public class NotificationController {
     }
 
     // Endpoint test gửi notification thủ công
-    @PostMapping("/test-send")
+    @PostMapping("")
     public void  testSendNotification(@RequestBody NotificationRequest request) {
          notificationService.sendNotification(request);
     }
