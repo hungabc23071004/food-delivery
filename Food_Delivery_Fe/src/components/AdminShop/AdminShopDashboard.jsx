@@ -3,6 +3,7 @@ import AdminSidebar from "./AdminSidebar";
 import AdminProductTable from "./AdminProductTable";
 import AdminCategoryTable from "./AdminCategoryTable";
 import AdminNotificationList from "./AdminNotificationList";
+import AdminOrderTable from "./AdminOrderTable";
 import { getMyShop } from "../../api/Shop";
 
 // (Tuỳ chọn) dữ liệu giả cho phần Customers
@@ -109,12 +110,6 @@ const AdminShopDashboard = () => {
 
       {/* Nội dung chính */}
       <main className="flex-1 p-8">
-        {/* Header */}
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-1">Pages</h2>
-          <div className="text-sm text-gray-400">Home / {selectedMenu}</div>
-        </div>
-
         {/* Hiển thị từng trang tương ứng */}
         {selectedMenu === "Dashboard" && (
           <div className="bg-white rounded-lg shadow p-6 text-gray-500 text-center">
@@ -133,11 +128,9 @@ const AdminShopDashboard = () => {
           <AdminNotificationList shopId={shop.id} />
         ) : null}
 
-        {selectedMenu === "Orders" && (
-          <div className="bg-white rounded-lg shadow p-6 text-gray-400 text-center">
-            Chưa có bảng đơn hàng hoặc thông báo.
-          </div>
-        )}
+        {selectedMenu === "Orders" && shop?.id ? (
+          <AdminOrderTable shopId={shop.id} />
+        ) : null}
 
         {selectedMenu === "Customers" && (
           <div className="bg-white rounded-lg shadow p-6 text-gray-400 text-center">

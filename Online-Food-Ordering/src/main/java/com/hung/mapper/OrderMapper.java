@@ -4,6 +4,7 @@ import com.hung.dto.request.OrderRequest;
 import com.hung.dto.response.OrderItemResponse;
 import com.hung.dto.response.OrderItermOptionResponse;
 import com.hung.dto.response.OrderResponse;
+import com.hung.dto.response.ShippingAddressResponse;
 import com.hung.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -31,6 +32,7 @@ public interface OrderMapper {
     @Mapping(target = "id", ignore = true)
     Order toOrder ( Cart cart);
 
+    @Mapping(target = "shopName", expression = "java(order.getShop().getName())")
     OrderResponse toOrderResponse(Order order);
 
     @Mapping(target = "foodName", expression = "java(orderItem.getFood().getName())")
@@ -46,4 +48,5 @@ public interface OrderMapper {
 
     List<OrderItermOptionResponse> toListOrderItermOptionResponse(List<OrderItermOption> orderItermOptionList);
     List<OrderResponse> toOrderResponseList(List<Order> orderList);
+    ShippingAddressResponse toShippingAddressResponse(ShippingAddress shippingAddress);
 }

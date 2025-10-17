@@ -15,8 +15,19 @@ export const createOrder = async (orderRequest) => {
 };
 
 // Lấy danh sách đơn hàng của user
-export const getOrdersByUserId = async () => {
-  const res = await axios.get(ORDER_API, { headers: getAuthHeader() });
+export const getOrdersByUserId = async (page = 1, size = 5) => {
+  const res = await axios.get(ORDER_API, {
+    headers: getAuthHeader(),
+    params: { page, size },
+  });
+  return res.data;
+};
+
+export const getOrdersByShopId = async (shopId, page = 1, size = 5) => {
+  const res = await axios.get(`${ORDER_API}/shop/${shopId}`, {
+    headers: getAuthHeader(),
+    params: { page, size },
+  });
   return res.data;
 };
 
@@ -37,5 +48,12 @@ export const cancelOrder = async (id) => {
     {},
     { headers: getAuthHeader() }
   );
+  return res.data;
+};
+
+export const getDetailOrder = async (id) => {
+  const res = await axios.get(`${ORDER_API}/${id}`, {
+    headers: getAuthHeader(),
+  });
   return res.data;
 };

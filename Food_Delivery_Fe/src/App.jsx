@@ -12,6 +12,8 @@ import ShopDetailPage from "./pages/ShopDetailPage";
 import LogoutModal from "./components/LogoutModal";
 import AdminShopDashboard from "./components/AdminShop/AdminShopDashboard";
 import { connectWebSocket, disconnectWebSocket } from "./api/WebsocketService";
+import OrderDetailPage from "./pages/OrderDetailPage";
+import OrderPage from "./pages/OrderPage";
 
 function App() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -86,6 +88,8 @@ function App() {
         <Route path="/category" element={<CategoryPage />} />
         <Route path="/shop/:id" element={<ShopDetailPage />} />
         <Route path="shop-admin" element={<AdminShopDashboard />} />
+        <Route path="/order-detail/:id" element={<OrderDetailPage />} />
+        <Route path="/orders" element={<OrderPage />} />
       </Routes>
 
       <LogoutModal

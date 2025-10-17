@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,10 @@ public class OrderResponse {
     BigDecimal shippingFee;
     Double  subtotal;
     String status;
+    LocalDateTime createdAt;
     String payment;
     BigDecimal totalDiscount;
+    String shopName;
+    ShippingAddressResponse shippingAddress;
     List<OrderItemResponse> orderItems= new ArrayList<>();
 }

@@ -9,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +32,11 @@ public class OrderController {
     }
 
     @GetMapping
-    public ApiResponse<List<OrderResponse>> getOrdersByUserId() {
-        return ApiResponse.<List<OrderResponse>>builder()
-                .result(orderService.getOrderByUserId())
+    public ApiResponse<Page<OrderResponse>> getOrdersByUserId( @RequestParam(defaultValue = "1") int page,
+                                                               @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        return ApiResponse.<Page<OrderResponse>>builder()
+                .result(orderService.getOrderByUserId(pageable))
                 .build();
     }
 
@@ -45,6 +50,22 @@ public class OrderController {
     public ApiResponse<OrderResponse> cancelOrder(@PathVariable String  id) {
         return ApiResponse.<OrderResponse>builder()
                 .result(orderService.cancelOrderByUser(id))
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<OrderResponse> getOrderById(@PathVariable String id) {
+        return ApiResponse.<OrderResponse>builder()
+                .result(orderService.getOrderById(id))
+                .build();
+    }
+
+    @GetMapping("/shop/{id}")
+    public ApiResponse<Page<OrderResponse>> getShopOrderById(@PathVariable String id, @RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page-1, size);
+        return ApiResponse.<Page<OrderResponse>>builder()
+                .result(orderService.getShopOrderById(id, pageable))
                 .build();
     }
 

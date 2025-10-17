@@ -17,6 +17,7 @@ import { GiFoodTruck } from "react-icons/gi";
 // Importing useNavigate for routing
 const Header = () => {
   const [mode, setMode] = useState("Giao hàng");
+
   const cartCount = 2;
   const [showUserMenu, setShowUserMenu] = useState(false);
   const dropdownRef = useRef(null);
@@ -98,8 +99,11 @@ const Header = () => {
 
         {/* Action icons */}
         <div className="flex items-center gap-6 ml-8">
-          {/* GiFoodTruck icon cho đơn hàng có tooltip */}
-          <div className="relative group cursor-pointer">
+          {/* GiFoodTruck icon cho đơn hàng có tooltip và onClick */}
+          <div
+            className="relative group cursor-pointer"
+            onClick={() => navigate("/orders")}
+          >
             <span className="text-orange-500">
               <GiFoodTruck size={30} />
             </span>

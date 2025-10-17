@@ -15,6 +15,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,10 +76,10 @@ public class OrderService {
     }
 
 
-    public List<OrderResponse> getOrderByUserId(){
+    public Page<OrderResponse> getOrderByUserId(Pageable pageable){
         User user = userRepository.findByUsernameAndActive(SecurityContextHolder.getContext().getAuthentication().getName(), true).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
-        List<Order> orderList = orderRepository.findByUserId(user.getId());
-        return orderMapper.toOrderResponseList(orderList);
+        Page<Order> orderList = orderRepository.findByUserId(user.getId(),pageable);
+        return orderList.map(order -> orderMapper.toOrderResponse(order));
     }
 
     private boolean isValidStatusTransition(OrderStatus current, OrderStatus next) {
@@ -130,5 +132,11 @@ public class OrderService {
     }
 
 
+    public OrderResponse getOrderById(String id) {
+        return orderMapper.toOrderResponse(orderRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.ORDER_NOT_FOUND)));
+    }
 
+    public Page<OrderResponse> getShopOrderById(String id, Pageable pageable) {
+        return orderRepository.findByShopId(id, pageable).map(order -> orderMapper.toOrderResponse(order));
+    }
 }
