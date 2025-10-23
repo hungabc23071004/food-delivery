@@ -2,6 +2,7 @@ package com.hung.service;
 
 import com.hung.dto.request.*;
 import com.hung.dto.response.CategoryResponse;
+import com.hung.dto.response.PagedResponse;
 import com.hung.dto.response.ShopResponse;
 import com.hung.entity.Category;
 import com.hung.entity.Shop;
@@ -10,6 +11,7 @@ import com.hung.entity.User;
 import com.hung.enums.ShopStatus;
 import com.hung.exception.AppException;
 import com.hung.exception.ErrorCode;
+import com.hung.mapper.PageMapper;
 import com.hung.mapper.ShopMapper;
 import com.hung.repository.CategoryRepository;
 import com.hung.repository.ShopCategoryRepository;
@@ -20,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,7 @@ public class ShopService {
     UserRepository userRepository;
     CategoryRepository categoryRepository;
     ShopCategoryRepository shopCategoryRepository;
+    PageMapper pageMapper;
 
     static final Path CURRENT_FOLDER = Paths.get(System.getProperty("user.dir"));
 
@@ -121,8 +124,9 @@ public class ShopService {
         return shopMapper.toShopResponseList(shopRepository.findByCategories_Id(id));
     }
 
-    public Page<ShopResponse> getAllShop(Pageable pageable) {
-        return shopRepository.findAll(pageable).map(shopMapper::toShopResponse);
+    @Cacheable(value = "shops", key = "'page:' + #pageable.pageNumber")
+    public PagedResponse<ShopResponse> getAllShop(Pageable pageable) {
+        return pageMapper.toPagedResponse(shopRepository.findAll(pageable).map(shopMapper::toShopResponse));
     }
 
     public ShopResponse getShopById(String id) {

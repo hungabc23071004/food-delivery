@@ -5,10 +5,12 @@ import com.hung.dto.request.FoodRequest;
 import com.hung.dto.response.FoodOptionGroupResponse;
 import com.hung.dto.response.FoodOptionResponse;
 import com.hung.dto.response.FoodResponse;
+import com.hung.dto.response.PagedResponse;
 import com.hung.entity.*;
 import com.hung.exception.AppException;
 import com.hung.exception.ErrorCode;
 import com.hung.mapper.FoodMapper;
+import com.hung.mapper.PageMapper;
 import com.hung.repository.CategoryRepository;
 import com.hung.repository.FoodRepository;
 import com.hung.repository.UserRepository;
@@ -16,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +43,7 @@ public class FoodService {
     FoodMapper foodMapper;
     CategoryRepository categoryRepository;
     UserRepository userRepository;
+    PageMapper pageMapper;
 
     static final Path CURRENT_FOLDER = Paths.get(System.getProperty("user.dir"));
 
@@ -124,8 +128,8 @@ public class FoodService {
         }
         return responseList;
     }
-
-    public Page<FoodResponse> getFoodByShopId(String shopId, Pageable pageable) {
+    @Cacheable(value = "foodShop", key = "'page:' + #shopId + ':' + #pageable.pageNumber")
+    public PagedResponse<FoodResponse> getFoodByShopId(String shopId, Pageable pageable) {
 
         Page<Food> foodPage = foodRepository.findByShop_Id(shopId, pageable);
 
@@ -156,7 +160,8 @@ public class FoodService {
         }
 
         // Trả về page đã map (custom Page)
-        return new PageImpl<>(responseList, pageable, foodPage.getTotalElements());
+        return  pageMapper.toPagedResponse( new PageImpl<>(responseList, pageable, foodPage.getTotalElements()));
+
     }
 
 }

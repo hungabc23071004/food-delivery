@@ -2,6 +2,7 @@ package com.hung.controller;
 
 import com.hung.dto.request.*;
 import com.hung.dto.response.ApiResponse;
+import com.hung.dto.response.PagedResponse;
 import com.hung.dto.response.ShopResponse;
 import com.hung.service.ShopService;
 import lombok.AccessLevel;
@@ -64,12 +65,12 @@ public class ShopController {
 
     }
     @GetMapping
-    ApiResponse<Page<ShopResponse>> getAllShop (
+    ApiResponse<PagedResponse<ShopResponse>> getAllShop (
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "25") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return ApiResponse.<Page<ShopResponse>>builder()
+        return ApiResponse.<PagedResponse<ShopResponse>>builder()
                 .result(shopService.getAllShop(pageable))
                 .build();
     }

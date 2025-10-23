@@ -1,5 +1,6 @@
 package com.hung.service;
 
+import com.hung.dto.request.NotificationRequest;
 import com.hung.dto.request.OrderRequest;
 import com.hung.dto.request.OrderStatusRequest;
 import com.hung.dto.response.OrderResponse;
@@ -65,12 +66,14 @@ public class OrderService {
         cart.setStatus(CartStatus.CLEARED);
         cartRepository.save(cart);
         OrderResponse orderResponse = orderMapper.toOrderResponse(order);
-//        notificationService.sendNotification(
-//                cart.getShop().getId(),
-//                "SHOP",
-//                "Có đơn hàng mới",
-//                "Bạn có một đơn hàng mới từ " + order.getUser().getUsername()
-//        );
+        notificationService.sendNotification(NotificationRequest.builder()
+                        .message("New order received: " + order.getId())
+                        .title("New Order")
+                        .type("SHOP")
+                        .receiverId(List.of(order.getShop().getId()))
+                .build()
+        );
+
         return orderResponse;
 
     }

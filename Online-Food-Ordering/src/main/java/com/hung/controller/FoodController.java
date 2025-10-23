@@ -3,6 +3,7 @@ package com.hung.controller;
 import com.hung.dto.request.FoodRequest;
 import com.hung.dto.response.ApiResponse;
 import com.hung.dto.response.FoodResponse;
+import com.hung.dto.response.PagedResponse;
 import com.hung.service.FoodService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +49,11 @@ public class FoodController {
 
 
     @GetMapping("/shop/{id}")
-    public ApiResponse<Page<FoodResponse>> getFoodByShopId(@PathVariable String id,
-                                                           @RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "2") int size) {
+    public ApiResponse<PagedResponse<FoodResponse>> getFoodByShopId(@PathVariable String id,
+                                                                    @RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "2") int size) {
         Pageable pageable = PageRequest.of(page-1, size);
-        return ApiResponse.<Page<FoodResponse>>builder()
+        return ApiResponse.<PagedResponse<FoodResponse>>builder()
                 .result(foodService.getFoodByShopId(id, pageable))
                 .build();
     }
